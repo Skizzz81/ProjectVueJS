@@ -17,17 +17,17 @@ const default_quests = [
 
 export const useQuestStore = defineStore('quest', () => {
     // Helpers
-    function findQuest(quest_id){return quest_state.value.find(({ id }) => (id === quest_id));};
+    function findQuest(quest_id){return quest_list.value.find(({ id }) => (id === quest_id));};
 
     // States
-    const quest_state = ref(JSON.parse(localStorage.getItem('quests') ?? default_quests));
+    const quest_list = ref(JSON.parse(localStorage.getItem('quests') ?? default_quests));
 
     // Watchers
-    watchEffect(() => {localStorage.setItem('quests', JSON.stringify(liste.value));});
+    watchEffect(() => {localStorage.setItem('quests', JSON.stringify(quest_list.value));});
 
     // Expose
     return {
-        quest_state,
+        quest_list,
         findQuest
     };
 });
