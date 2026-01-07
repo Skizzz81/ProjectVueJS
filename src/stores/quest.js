@@ -15,15 +15,17 @@ const default_quests = [
     },
 ]
 
-export const useQuestStore = defineStore('quest', () => {
+export const useQuestsStore = defineStore('quest', () => {
     // Helpers
     function findQuest(quest_id){return quest_list.value.find(({ id }) => (id === quest_id));};
 
     // States
-    const quest_list = ref(JSON.parse(localStorage.getItem('quests') ?? default_quests));
+    const quest_list = ref(JSON.parse(localStorage.getItem('quests') ?? "null") ?? default_quests);
 
     // Watchers
-    watchEffect(() => {localStorage.setItem('quests', JSON.stringify(quest_list.value));});
+    watchEffect(() => {
+        localStorage.setItem('quests', JSON.stringify(quest_list.value));
+    });
 
     // Expose
     return {
