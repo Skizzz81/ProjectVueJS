@@ -27,20 +27,43 @@ export const useChaptersStore = defineStore("chapters", () => {
     localStorage.setItem("chapters", JSON.stringify(list.value));
   });
 
-  function genId(){ return (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Math.random().toString(36).slice(2,9); }
-  function trouverChapitre(id){ return list.value.find(chapitre => chapitre.id === id); }
-  function trouverIndexChapitre(id){ return list.value.findIndex(chapitre => chapitre.id === id); }
+  function trouverChapitre(id) {
+    return list.value.find((chapitre) => chapitre.id === id);
+  }
 
-  function ajouterChapitre(data = {}){
+  function dupliquerChapitre(id) {
+    const original = trouverChapitre(id);
+    if (!original) return { success: false, error: "chapitre introuvable" };
+
+    const copie = {
+      ...original,
+      id: crypto.randomUUID(),
+      nom: `${original.nom} (copie)`
+    };
+    list.value.push(copie);
+    return { success: true, chapitre: copie };
+  }
+
+  function genId() {
+    return (typeof crypto !== "undefined" && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : Math.random().toString(36).slice(2, 9);
+  }
+
+  function trouverIndexChapitre(id) {
+    return list.value.findIndex((chapitre) => chapitre.id === id);
+  }
+
+  function ajouterChapitre(data = {}) {
     const chapitre = {
       id: data.id ?? genId(),
       campagneId: data.campagneId ?? null,
-      nom: data.nom || 'Nouveau chapitre',
-      etat: data.etat || 'inactif',
-      description: data.description || '',
-      commentaireMj: data.commentaireMj || '',
-      motPasseActivation: data.motPasseActivation || '',
-      motPasseResolution: data.motPasseResolution || '',
+      nom: data.nom || "Nouveau chapitre",
+      etat: data.etat || "inactif",
+      description: data.description || "",
+      commentaireMj: data.commentaireMj || "",
+      motPasseActivation: data.motPasseActivation || "",
+      motPasseResolution: data.motPasseResolution || "",
       queteIds: data.queteIds || [],
       recompenseObjetsIds: data.recompenseObjetsIds || [],
       recompenseIndicesIds: data.recompenseIndicesIds || [],
@@ -50,16 +73,16 @@ export const useChaptersStore = defineStore("chapters", () => {
     return { success: true, chapitre };
   }
 
-  function modifierChapitre(id, data = {}){
+  function modifierChapitre(id, data = {}) {
     const chapitre = trouverChapitre(id);
-    if (!chapitre) return { success: false, error: 'chapitre introuvable' };
+    if (!chapitre) return { success: false, error: "chapitre introuvable" };
     Object.assign(chapitre, data);
     return { success: true, chapitre };
   }
 
-  function supprimerChapitre(id){
+  function supprimerChapitre(id) {
     const index = trouverIndexChapitre(id);
-    if (index === -1) return { success: false, error: 'chapitre introuvable' };
+    if (index === -1) return { success: false, error: "chapitre introuvable" };
     list.value.splice(index, 1);
     return { success: true };
   }
@@ -67,6 +90,7 @@ export const useChaptersStore = defineStore("chapters", () => {
   return {
     list,
     trouverChapitre,
+    dupliquerChapitre,
     trouverIndexChapitre,
     ajouterChapitre,
     modifierChapitre,

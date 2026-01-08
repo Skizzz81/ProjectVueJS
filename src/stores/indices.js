@@ -4,6 +4,7 @@ import { ref, watchEffect } from "vue";
 const default_clues = [
   {
     id: 1,
+    nom: "Indice 1",
     description: "Description de l'indice.",
     commentaireMj: "Commentaire visible uniquement en mode MJ."
   }
@@ -18,17 +19,36 @@ export const useCluesStore = defineStore("clues", () => {
     localStorage.setItem("clues", JSON.stringify(list.value));
   });
 
-  function genId(){ return (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Math.random().toString(36).slice(2,9); }
-  function trouverIndice(id){ return list.value.find(i => i.id === id); }
-  function trouverIndexIndice(id){ return list.value.findIndex(i => i.id === id); }
+  function dupliquerIndice(id) {
+    const original = trouverIndice(id);
+    if (!original) return { success: false, error: "indice introuvable" };
+
+    const copie = {
+      ...original,
+      id: crypto.randomUUID(),
+      nom: `${original.nom} (copie)`
+    };
+    list.value.push(copie);
+    return { success: true, indice: copie };
+  }
+
+  function genId() {
+    return (typeof crypto !== "undefined" && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : Math.random().toString(36).slice(2, 9);
+  }
+
+  function trouverIndice(id) { return list.value.find(i => i.id === id); }
+  function trouverIndexIndice(id) { return list.value.findIndex(i => i.id === id); }
 
   function ajouterIndice(data = {}){
     const indice = {
       id: data.id ?? genId(),
+      nom: data.nom || "Nouvel indice",
       description: data.description || '',
       commentaireMj: data.commentaireMj || ''
     };
-    list.value.push(i);
+    list.value.push(indice);
     return { success: true, indice };
   }
 
@@ -49,6 +69,7 @@ export const useCluesStore = defineStore("clues", () => {
   return {
     list,
     trouverIndice,
+    dupliquerIndice,
     trouverIndexIndice,
     ajouterIndice,
     modifierIndice,

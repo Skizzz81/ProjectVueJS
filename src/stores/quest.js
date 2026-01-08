@@ -17,17 +17,16 @@ const default_quests = [
 
 export const useQuestsStore = defineStore('quest', () => {
     // Helpers
+    function findQuest(quest_id){return list.value.find(({ id }) => (id === quest_id));};
     function genId(){ return (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Math.random().toString(36).slice(2,9); }
-    function findQuest(quest_id){ return quest_list.value.find(quete => quete.id === quest_id); };
-    function findIndex(quest_id){ return quest_list.value.findIndex(quete => quete.id === quest_id); }
+ 
+    function findIndex(quest_id){ return list.value.findIndex(quete => quete.id === quest_id); }
 
     // States
-    const quest_list = ref(JSON.parse(localStorage.getItem('quests') ?? "null") ?? default_quests);
+    const list = ref(JSON.parse(localStorage.getItem('quests') ?? 'null') ?? default_quests);
 
     // Watchers
-    watchEffect(() => {
-        localStorage.setItem('quests', JSON.stringify(quest_list.value));
-    });
+    watchEffect(() => {localStorage.setItem('quests', JSON.stringify(list.value));});
 
     // Expose
     function ajouterQuete(data = {}){
@@ -45,7 +44,7 @@ export const useQuestsStore = defineStore('quest', () => {
             motDePasseResolution: data.motDePasseResolution || ''
         };
 
-        quest_list.value.push(quete);
+        list.value.push(quete);
         return { success: true, quete };
     }
 
@@ -71,12 +70,12 @@ export const useQuestsStore = defineStore('quest', () => {
     function supprimerQuete(id){
         const index = findIndex(id);
         if(index === -1) return { success: false, error: 'quête introuvable' };
-        quest_list.value.splice(index, 1);
+        list.value.splice(index, 1);
         return { success: true };
     }
 
     return {
-        quest_list,
+        list,
         findQuest,
         ajouterQuete,
         modifierQuete,
