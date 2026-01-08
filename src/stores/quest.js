@@ -20,7 +20,7 @@ export const useQuestsStore = defineStore('quest', () => {
     function findQuest(quest_id){return list.value.find(({ id }) => (id === quest_id));};
 
     // States
-    const list = ref(JSON.parse(localStorage.getItem('quests') ?? "null") ?? default_quests);
+    const list = ref(JSON.parse(localStorage.getItem('quests') ?? 'null') ?? default_quests);
 
     // Watchers
     watchEffect(() => {localStorage.setItem('quests', JSON.stringify(list.value));});
