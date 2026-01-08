@@ -19,10 +19,6 @@ export const useCluesStore = defineStore("clues", () => {
     localStorage.setItem("clues", JSON.stringify(list.value));
   });
 
-  function trouverIndice(id) {
-    return list.value.find((indice) => indice.id === id);
-  }
-
   function dupliquerIndice(id) {
     const original = trouverIndice(id);
     if (!original) return { success: false, error: "indice introuvable" };
@@ -36,9 +32,49 @@ export const useCluesStore = defineStore("clues", () => {
     return { success: true, indice: copie };
   }
 
+
+  function genId() {
+    return (typeof crypto !== "undefined" && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : Math.random().toString(36).slice(2, 9);
+  }
+  function trouverIndice(id) { return list.value.find(i => i.id === id); }
+  function trouverIndexIndice(id) { return list.value.findIndex(i => i.id === id); }
+
+
+  
+  function ajouterIndice(data = {}){
+    const indice = {
+      id: data.id ?? genId(),
+      nom: data.nom || "Nouvel indice",
+      description: data.description || '',
+      commentaireMj: data.commentaireMj || ''
+    };
+    list.value.push(indice);
+    return { success: true, indice };
+  }
+
+  function modifierIndice(id, data = {}){
+    const indice = trouverIndice(id);
+    if(!indice) return { success: false, error: 'indice introuvable' };
+    Object.assign(indice, data);
+    return { success: true, indice };
+  }
+
+  function supprimerIndice(id){
+    const index = trouverIndexIndice(id);
+    if(index === -1) return { success: false, error: 'indice introuvable' };
+    list.value.splice(index, 1);
+    return { success: true };
+  }
+
   return {
     list,
     trouverIndice,
-    dupliquerIndice
+    dupliquerIndice,
+    trouverIndexIndice,
+    ajouterIndice,
+    modifierIndice,
+    supprimerIndice
   };
 });
