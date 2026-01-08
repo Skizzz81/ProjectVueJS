@@ -27,7 +27,7 @@ export const useQuestsStore = defineStore('quest', () => {
 
     // Expose
     return {
-        quest_list: list,
+        list,
         findQuest
     };
 });
