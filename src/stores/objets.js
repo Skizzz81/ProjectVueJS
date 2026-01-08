@@ -23,7 +23,40 @@ export const useItemsStore = defineStore("items", () => {
     localStorage.setItem("items", JSON.stringify(list.value));
   });
 
+  function genId(){ return (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Math.random().toString(36).slice(2,9); }
+  function trouverObjet(id){ return list.value.find(objet => objet.id === id); }
+  function trouverIndexObjet(id){ return list.value.findIndex(objet => objet.id === id); }
+
+  function ajouterObjet(data = {}){
+    const objet = {
+      id: data.id ?? genId(),
+      description: data.description || 'Nouvel objet',
+      commentaireMj: data.commentaireMj || ''
+    };
+    list.value.push(objet);
+    return { success: true, objet };
+  }
+
+  function modifierObjet(id, data = {}){
+    const objet = trouverObjet(id);
+    if(!objet) return { success: false, error: 'objet introuvable' };
+    Object.assign(objet, data);
+    return { success: true, objet };
+  }
+
+  function supprimerObjet(id){
+    const index = trouverIndexObjet(id);
+    if(index === -1) return { success: false, error: 'objet introuvable' };
+    list.value.splice(index, 1);
+    return { success: true };
+  }
+
   return {
-    list
+    list,
+    trouverObjet,
+    trouverIndexObjet,
+    ajouterObjet,
+    modifierObjet,
+    supprimerObjet
   };
 });
