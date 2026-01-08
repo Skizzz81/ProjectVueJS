@@ -23,6 +23,23 @@ export const usePlayersStore = defineStore("players", () => {
     localStorage.setItem("players", JSON.stringify(list.value));
   });
 
+
+
+  function dupliquerJoueur(id) {
+    const original = trouverJoueur(id);
+    if (!original) return { success: false, error: "joueur introuvable" };
+
+    const copie = {
+      ...original,
+      id: crypto.randomUUID(),
+      nom: `${original.nom} (copie)`
+    };
+    list.value.push(copie);
+    return { success: true, joueur: copie };
+
+  }
+
+  
   function genId() { return (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Math.random().toString(36).slice(2,9); }
   function trouverJoueur(id) { return list.value.find(joueur => joueur.id === id); }
   function trouverIndexJoueur(id) { return list.value.findIndex(joueur => joueur.id === id); }
@@ -59,6 +76,7 @@ export const usePlayersStore = defineStore("players", () => {
   return {
     list,
     trouverJoueur,
+    dupliquerJoueur,
     trouverIndexJoueur,
     ajouterJoueur,
     modifierJoueur,

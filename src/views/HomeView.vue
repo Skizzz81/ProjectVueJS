@@ -9,5 +9,6 @@ import DebugStores from "../components/DebugStores.vue";
 
     <!-- Composant temporaire pour afficher l'etat des stores -->
     <DebugStores />
+    
   </section>
 </template>

@@ -4,6 +4,7 @@ import { ref, watchEffect } from "vue";
 const default_places = [
   {
     id: 1,
+    nom: "Lieu 1",
     description: "Description du lieu.",
     joueurIds: [1]
   }
@@ -18,6 +19,23 @@ export const usePlacesStore = defineStore("places", () => {
     localStorage.setItem("places", JSON.stringify(list.value));
   });
 
+  function trouverLieu(id) {
+    return list.value.find((lieu) => lieu.id === id);
+  }
+
+  function dupliquerLieu(id) {
+    const original = trouverLieu(id);
+    if (!original) return { success: false, error: "lieu introuvable" };
+
+    const copie = {
+      ...original,
+      id: crypto.randomUUID(),
+      nom: `${original.nom} (copie)`
+    };
+    list.value.push(copie);
+    return { success: true, lieu: copie };
+  }
+  
   function genId(){ return (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Math.random().toString(36).slice(2,9); }
   function trouverLieu(id){ return list.value.find(lieu => lieu.id === id); }
   function trouverIndexLieu(id){ return list.value.findIndex(lieu => lieu.id === id); }
@@ -49,6 +67,7 @@ export const usePlacesStore = defineStore("places", () => {
   return {
     list,
     trouverLieu,
+    dupliquerLieu,
     trouverIndexLieu,
     ajouterLieu,
     modifierLieu,
