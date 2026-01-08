@@ -29,6 +29,7 @@ export const useItemsStore = defineStore("items", () => {
     return list.value.find((objet) => objet.id === id);
   }
 
+
   function dupliquerObjet(id) {
     const original = trouverObjet(id);
     if (!original) return { success: false, error: "objet introuvable" };
@@ -42,15 +43,21 @@ export const useItemsStore = defineStore("items", () => {
     return { success: true, objet: copie };
   }
   
-  function genId(){ return (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Math.random().toString(36).slice(2,9); }
-  function trouverObjet(id){ return list.value.find(objet => objet.id === id); }
-  function trouverIndexObjet(id){ return list.value.findIndex(objet => objet.id === id); }
+  function genId() {
+    return (typeof crypto !== "undefined" && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : Math.random().toString(36).slice(2, 9);
+  }
+  function trouverIndexObjet(id) {
+    return list.value.findIndex((objet) => objet.id === id);
+  }
 
-  function ajouterObjet(data = {}){
+  function ajouterObjet(data = {}) {
     const objet = {
       id: data.id ?? genId(),
-      description: data.description || 'Nouvel objet',
-      commentaireMj: data.commentaireMj || ''
+      nom: data.nom || "Nouvel objet",
+      description: data.description || "",
+      commentaireMj: data.commentaireMj || ""
     };
     list.value.push(objet);
     return { success: true, objet };

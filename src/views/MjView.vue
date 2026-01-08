@@ -3,17 +3,13 @@
 
 <template>
   <section>
-    <h2>Accueil</h2>
-    <p>Choisis un mode :</p>
+    <h2>Mode MJ</h2>
+    <p>Bienvenue dans notre application de gestion de campagne de jeu de role !</p>
 
     <div class="cards">
-      <RouterLink class="card" :to="{ name: 'mj' }">
-        <h3>Mode MJ</h3>
-        <p>Configurer et piloter la campagne.</p>
-      </RouterLink>
-      <RouterLink class="card" :to="{ name: 'joueur' }">
-        <h3>Mode Joueur</h3>
-        <p>Consulter et interagir avec la campagne.</p>
+      <RouterLink class="card" :to="{ name: 'players' }">
+        <h3>Contrôle des joueurs</h3>
+        <p>Créer, modifier, dupliquer et supprimer les joueurs.</p>
       </RouterLink>
     </div>
   </section>

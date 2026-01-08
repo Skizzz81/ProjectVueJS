@@ -23,6 +23,7 @@ export const usePlacesStore = defineStore("places", () => {
     return list.value.find((lieu) => lieu.id === id);
   }
 
+
   function dupliquerLieu(id) {
     const original = trouverLieu(id);
     if (!original) return { success: false, error: "lieu introuvable" };
@@ -36,14 +37,20 @@ export const usePlacesStore = defineStore("places", () => {
     return { success: true, lieu: copie };
   }
   
-  function genId(){ return (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Math.random().toString(36).slice(2,9); }
-  function trouverLieu(id){ return list.value.find(lieu => lieu.id === id); }
-  function trouverIndexLieu(id){ return list.value.findIndex(lieu => lieu.id === id); }
+  function genId() {
+    return (typeof crypto !== "undefined" && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : Math.random().toString(36).slice(2, 9);
+  }
+  function trouverIndexLieu(id) {
+    return list.value.findIndex((lieu) => lieu.id === id);
+  }
 
-  function ajouterLieu(data = {}){
+  function ajouterLieu(data = {}) {
     const lieu = {
       id: data.id ?? genId(),
-      description: data.description || '',
+      nom: data.nom || "Nouveau lieu",
+      description: data.description || "",
       joueurIds: data.joueurIds || []
     };
     list.value.push(lieu);

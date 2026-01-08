@@ -32,17 +32,15 @@ export const useCluesStore = defineStore("clues", () => {
     return { success: true, indice: copie };
   }
 
-
   function genId() {
     return (typeof crypto !== "undefined" && crypto.randomUUID)
       ? crypto.randomUUID()
       : Math.random().toString(36).slice(2, 9);
   }
+
   function trouverIndice(id) { return list.value.find(i => i.id === id); }
   function trouverIndexIndice(id) { return list.value.findIndex(i => i.id === id); }
 
-
-  
   function ajouterIndice(data = {}){
     const indice = {
       id: data.id ?? genId(),
