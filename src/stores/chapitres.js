@@ -27,7 +27,26 @@ export const useChaptersStore = defineStore("chapters", () => {
     localStorage.setItem("chapters", JSON.stringify(list.value));
   });
 
+  function trouverChapitre(id) {
+    return list.value.find((chapitre) => chapitre.id === id);
+  }
+
+  function dupliquerChapitre(id) {
+    const original = trouverChapitre(id);
+    if (!original) return { success: false, error: "chapitre introuvable" };
+
+    const copie = {
+      ...original,
+      id: crypto.randomUUID(),
+      nom: `${original.nom} (copie)`
+    };
+    list.value.push(copie);
+    return { success: true, chapitre: copie };
+  }
+
   return {
-    list
+    list,
+    trouverChapitre,
+    dupliquerChapitre
   };
 });
