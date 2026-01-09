@@ -6,6 +6,7 @@ const default_places = [
     id: 1,
     nom: "Lieu 1",
     description: "Description du lieu.",
+    commentaireMj: "Coommentaire ",
     joueurIds: [1]
   }
 ];
@@ -51,6 +52,7 @@ export const usePlacesStore = defineStore("places", () => {
       id: data.id ?? genId(),
       nom: data.nom || "Nouveau lieu",
       description: data.description || "",
+      commentaireMj: data.commentaireMj || "",
       joueurIds: data.joueurIds || []
     };
     list.value.push(lieu);
