@@ -1,10 +1,12 @@
 <script setup>
 import { computed, ref } from "vue";
-import CampaignForm from "../components/CampaignForm.vue";
-import CampaignsTable from "../components/CampaignsTable.vue";
+import { useRouter } from "vue-router";
+import FormulaireCampagne from "../components/FormulaireCampagne.vue";
+import TableCampagnes from "../components/TableCampagnes.vue";
 import ControleMjPanel from "../components/ControleMjPanel.vue";
 import { useCampaignsStore } from "../stores/campagnes";
 
+const router = useRouter();
 const campaignsStore = useCampaignsStore();
 const editingCampaignId = ref(null);
 const creating = ref(false);
@@ -28,11 +30,17 @@ function modifierCampagne(id) {
 function enregistrerCampagne(data) {
   if (!editingCampaignId.value) return;
   campaignsStore.modifierCampagne(editingCampaignId.value, data);
+  if (data.etat === "active") {
+    campaignsStore.setActiveCampaign(editingCampaignId.value);
+  }
   editingCampaignId.value = null;
 }
 
 function ajouterCampagne(data) {
-  campaignsStore.ajouterCampagne(data);
+  const res = campaignsStore.ajouterCampagne(data);
+  if (data.etat === "active" && res?.campagne?.id) {
+    campaignsStore.setActiveCampaign(res.campagne.id);
+  }
   creating.value = false;
 }
 
@@ -62,6 +70,11 @@ async function importerCampagne(ev) {
   ev.target.value = "";
   if (!res.success) alert("Import error: " + (res.error || "inconnu"));
 }
+
+function activerCampagne(id) {
+  campaignsStore.setActiveCampaign(id);
+  router.push({ name: "campagneactive" });
+}
 </script>
 
 <template>
@@ -81,16 +94,17 @@ async function importerCampagne(ev) {
     </div>
 
     <p v-if="campaignsStore.list.length === 0">Aucune campagne.</p>
-    <CampaignsTable
+    <TableCampagnes
       v-else
       :liste="campaignsStore.list"
       @modifier="modifierCampagne"
       @dupliquer="dupliquerCampagne"
       @supprimer="supprimerCampagne"
       @exporter="exporterCampagne"
+      @activer="activerCampagne"
     />
 
-    <CampaignForm
+    <FormulaireCampagne
       v-if="editingCampaign"
       mode="edit"
       :campaign="editingCampaign"
@@ -98,14 +112,12 @@ async function importerCampagne(ev) {
       @cancel="annulerEdition"
     />
 
-    <CampaignForm
+    <FormulaireCampagne
       v-if="creating"
       mode="create"
       @submit="ajouterCampagne"
       @cancel="annulerEdition"
     />
-
-    <ControleMjPanel />
   </section>
 </template>
 

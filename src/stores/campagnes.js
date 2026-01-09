@@ -5,10 +5,10 @@ const default_campaigns = [
   {
     id: 1,
     nom: "Campagne de base",
-    etat: "brouillon",
+    etat: "active",
     description: "Exemple de campagne.",
     commentaireMj: "Commentaire visible uniquement en mode MJ.",
-    joueurIds: [1],
+    joueurIds: [1,2],
     chapitreIds: [1]
   }
 ];
@@ -184,6 +184,20 @@ export const useCampaignsStore = defineStore("campaigns", () => {
     });
   }
 
+  function setActiveCampaign(id) {
+    const campagne = trouverCampaign(id);
+    if (!campagne) return { success: false, error: "campagne introuvable" };
+
+    const ancienne = list.value.find((c) => c.id === activeCampaignId.value);
+    if (ancienne && ancienne.id !== id) {
+      ancienne.etat = "disponible";
+    }
+
+    campagne.etat = "active";
+    activeCampaignId.value = id;
+    return { success: true, campagne };
+  }
+
   return {
     list,
     activeCampaignId,
@@ -195,6 +209,7 @@ export const useCampaignsStore = defineStore("campaigns", () => {
     dupliquerCampagne,
     exporterCampagne,
     importerCampagneDepuisObjet,
-    importerCampagneDepuisFichier
+    importerCampagneDepuisFichier,
+    setActiveCampaign
   };
 });

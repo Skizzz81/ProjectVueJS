@@ -5,7 +5,7 @@ defineProps({
   liste: { type: Array, required: true }
 });
 
-const emit = defineEmits(["modifier", "dupliquer", "supprimer", "exporter"]);
+const emit = defineEmits(["modifier", "dupliquer", "supprimer", "exporter", "activer"]);
 
 const chaptersStore = useChaptersStore();
 
@@ -22,7 +22,7 @@ function getChapterNames(campagne) {
     <thead>
       <tr>
         <th>Nom</th>
-        <th>État</th>
+        <th>Etat</th>
         <th>Description</th>
         <th>Chapitres</th>
         <th>Actions</th>
@@ -35,7 +35,21 @@ function getChapterNames(campagne) {
         <td>{{ campagne.description }}</td>
         <td>{{ getChapterNames(campagne) }}</td>
         <td class="actions">
-          <button @click="emit('modifier', campagne.id)">Éditer</button>
+          <button
+            v-if="campagne.etat === 'active'"
+            @click="emit('activer', campagne.id)"
+            class="activate"
+          >
+            Gerer
+          </button>
+          <button
+            v-else
+            @click="emit('activer', campagne.id)"
+            class="activate"
+          >
+            Activer
+          </button>
+          <button @click="emit('modifier', campagne.id)">Editer</button>
           <button @click="emit('dupliquer', campagne.id)">Dupliquer</button>
           <button @click="emit('exporter', campagne.id)">Exporter</button>
           <button class="danger" @click="emit('supprimer', campagne.id)">Supprimer</button>
@@ -92,5 +106,16 @@ button.danger {
 
 button.danger:hover {
   background: #fff0f0;
+}
+
+button.activate {
+  background: #42b983;
+  color: white;
+  border-color: #42b983;
+  font-weight: 600;
+}
+
+button.activate:hover {
+  background: #359268;
 }
 </style>
