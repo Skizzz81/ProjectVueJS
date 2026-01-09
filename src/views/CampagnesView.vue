@@ -30,11 +30,17 @@ function modifierCampagne(id) {
 function enregistrerCampagne(data) {
   if (!editingCampaignId.value) return;
   campaignsStore.modifierCampagne(editingCampaignId.value, data);
+  if (data.etat === "active") {
+    campaignsStore.setActiveCampaign(editingCampaignId.value);
+  }
   editingCampaignId.value = null;
 }
 
 function ajouterCampagne(data) {
-  campaignsStore.ajouterCampagne(data);
+  const res = campaignsStore.ajouterCampagne(data);
+  if (data.etat === "active" && res?.campagne?.id) {
+    campaignsStore.setActiveCampaign(res.campagne.id);
+  }
   creating.value = false;
 }
 
