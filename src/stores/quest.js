@@ -5,12 +5,12 @@ const allowed_statuses  = ['inactive', 'active', 'achieved', 'cancelled'];
 const default_quests    = [
     {
         id:                     1,
-        name:                   "L'hérétique",
+        name:                   "Première quête",
         status:                 'active',
-        description:            "Pour un tel échec, aucune punition n'est assez grande...",
+        description:            "Description de la quête",
         commentary:             "",
-        activation_password:    "WORT_WORT_WORT",
-        resolution_password:    "SHINY_ARMOR",
+        activation_password:    "",
+        resolution_password:    "",
         rewards:                [],
         chapter_id:             1,
         place_id:               1
