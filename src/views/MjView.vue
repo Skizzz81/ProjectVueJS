@@ -7,6 +7,11 @@
     <p>Bienvenue dans notre application de gestion de campagne de jeu de role !</p>
 
     <div class="cards">
+      <RouterLink class="card" :to="{ name: 'campagnes' }">
+        <h3>Gestion des campagnes</h3>
+        <p>Créer, modifier, importer/exporter et contrôler les campagnes.</p>
+      </RouterLink>
+
       <RouterLink class="card" :to="{ name: 'players' }">
         <h3>Contrôle des joueurs</h3>
         <p>Créer, modifier, dupliquer et supprimer les joueurs.</p>
