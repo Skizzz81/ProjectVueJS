@@ -76,9 +76,9 @@ export const useQuestsStore = defineStore('quest', () => {
 
     return {
         list,
-        findQuest,
         ajouterQuete,
         modifierQuete,
-        supprimerQuete
+        supprimerQuete,
+        findQuest
     };
 });
