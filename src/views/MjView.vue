@@ -11,7 +11,6 @@
         <h3>Gestion des campagnes</h3>
         <p>Creer, modifier, importer/exporter et controler les campagnes.</p>
       </RouterLink>
-
       <RouterLink class="card" :to="{ name: 'players' }">
         <h3>Controle des joueurs</h3>
         <p>Creer, modifier, dupliquer et supprimer les joueurs.</p>
@@ -51,7 +50,7 @@ h3 {
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
   margin-top: 16px;
 }

@@ -159,7 +159,7 @@ function reprendreIndiceATous() {
         <select v-model="queteId">
           <option :value="null">— choisir —</option>
           <option
-            v-for="q in questsStore.quest_list"
+            v-for="q in questsStore.list"
             :key="q.id"
             :value="q.id"
           >
