@@ -10,6 +10,18 @@ const default_players = [
     description: "Description du joueur.",
     inventaireObjetsIds: [1],
     inventaireIndicesIds: [1],
+    lieuId: 1,
+  },
+
+  {
+
+    id: 2,
+    nom: "Joueur 2",
+    etat: "vivant",
+    commentaireMj: "Commentaire MJ pour le joueur 2.",
+    description: "Description du joueur 2.",
+    inventaireObjetsIds: [2],
+    inventaireIndicesIds: [2],
     lieuId: 1
   }
 ];
