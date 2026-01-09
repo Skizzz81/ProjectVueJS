@@ -9,15 +9,28 @@
     <div class="cards">
       <RouterLink class="card" :to="{ name: 'campagnes' }">
         <h3>Gestion des campagnes</h3>
-        <p>Créer, modifier, importer/exporter et contrôler les campagnes.</p>
+        <p>Creer, modifier, importer/exporter et controler les campagnes.</p>
       </RouterLink>
       <RouterLink class="card" :to="{ name: 'players' }">
-        <h3>Contrôle des joueurs</h3>
-        <p>Créer, modifier, dupliquer et supprimer les joueurs.</p>
+        <h3>Controle des joueurs</h3>
+        <p>Creer, modifier, dupliquer et supprimer les joueurs.</p>
       </RouterLink>
+    </div>
+
+    <div class="cards">
       <RouterLink class="card" :to="{ name: 'chapitres' }">
-        <h3>Gestion des chapitres</h3>
-        <p>Créer, modifier, dupliquer et gérer les chapitres.</p>
+        <h3>Controle des chapitres</h3>
+        <p>Creer, modifier, dupliquer et supprimer les chapitres.</p>
+      </RouterLink>
+
+      <RouterLink class="card" :to="{ name: 'quetes' }">
+        <h3>Controle des quetes</h3>
+        <p>Creer, modifier, dupliquer et supprimer les quetes.</p>
+      </RouterLink>
+
+      <RouterLink class="card" :to="{ name: 'content' }">
+        <h3>Controle des contenus</h3>
+        <p>Creer, modifier, dupliquer et supprimer un contenu (objets, indices, lieux).</p>
       </RouterLink>
     </div>
   </section>

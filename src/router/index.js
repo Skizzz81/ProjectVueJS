@@ -6,6 +6,9 @@ import ControlPlayersView from "../views/ControlPlayersView.vue";
 import ControlChapitresView from "../views/ControlChapitresView.vue";
 import MjView from "../views/MjView.vue";
 import PlayerView from "../views/PlayerView.vue";
+import ControlContentView from "../views/ControlContentView.vue";
+import ControlChaptersView from "../views/ControlChaptersView.vue";
+import ControlQuestsView from "../views/ControlQuestsView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -29,6 +32,16 @@ const router = createRouter({
       path: "/joueurs",
       name: "players",
       component: ControlPlayersView
+    },
+    {
+      path: "/contenu",
+      name: "content",
+      component: ControlContentView
+    },
+    {
+      path: "/quetes",
+      name: "quetes",
+      component: ControlQuestsView
     }
     ,
     {
