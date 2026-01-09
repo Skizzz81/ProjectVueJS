@@ -16,7 +16,7 @@ const form = ref({
   etat: "brouillon",
   description: "",
   commentaireMj: "",
-  chapitreId: null
+  chapitreIds: []
 });
 
 watch(
@@ -28,7 +28,7 @@ watch(
         etat: "brouillon",
         description: "",
         commentaireMj: "",
-        chapitreId: null
+        chapitreIds: []
       };
       return;
     }
@@ -37,11 +37,20 @@ watch(
       etat: campaign.etat ?? "brouillon",
       description: campaign.description ?? "",
       commentaireMj: campaign.commentaireMj ?? "",
-      chapitreId: Array.isArray(campaign.chapitreIds) ? (campaign.chapitreIds[0] ?? null) : null
+      chapitreIds: Array.isArray(campaign.chapitreIds) ? [...campaign.chapitreIds] : []
     };
   },
   { immediate: true }
 );
+
+function toggleChapter(chapitreId) {
+  const index = form.value.chapitreIds.indexOf(chapitreId);
+  if (index === -1) {
+    form.value.chapitreIds.push(chapitreId);
+  } else {
+    form.value.chapitreIds.splice(index, 1);
+  }
+}
 
 function envoyer() {
   emit("submit", {
@@ -49,7 +58,7 @@ function envoyer() {
     etat: form.value.etat,
     description: form.value.description,
     commentaireMj: form.value.commentaireMj,
-    chapitreIds: form.value.chapitreId ? [form.value.chapitreId] : []
+    chapitreIds: form.value.chapitreIds
   });
 }
 </script>
@@ -74,13 +83,23 @@ function envoyer() {
       </label>
 
       <label>
-        Chapitre
-        <select v-model="form.chapitreId">
-          <option :value="null">— aucun —</option>
-          <option v-for="chap in chaptersStore.list" :key="chap.id" :value="chap.id">
-            {{ chap.nom }}
-          </option>
-        </select>
+        Chapitres
+        <div class="chapters-selection">
+          <div v-for="chap in chaptersStore.list" :key="chap.id" class="checkbox-item">
+            <label>
+              <input 
+                type="checkbox" 
+                :value="chap.id" 
+                :checked="form.chapitreIds.includes(chap.id)"
+                @change="toggleChapter(chap.id)"
+              />
+              {{ chap.nom }}
+            </label>
+          </div>
+          <p v-if="chaptersStore.list.length === 0" class="no-chapters">
+            Aucun chapitre disponible
+          </p>
+        </div>
       </label>
 
       <label>
@@ -162,5 +181,40 @@ button[type="submit"]:hover {
 
 button:hover {
   background: #f4f4f4;
+}
+
+.chapters-selection {
+  margin-top: 8px;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background: #fafafa;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.checkbox-item {
+  margin: 6px 0;
+}
+
+.checkbox-item label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: normal;
+  cursor: pointer;
+  margin: 0;
+}
+
+.checkbox-item input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+  cursor: pointer;
+}
+
+.no-chapters {
+  color: #999;
+  font-style: italic;
+  margin: 0;
 }
 </style>

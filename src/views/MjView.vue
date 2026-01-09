@@ -11,10 +11,13 @@
         <h3>Gestion des campagnes</h3>
         <p>Créer, modifier, importer/exporter et contrôler les campagnes.</p>
       </RouterLink>
-
       <RouterLink class="card" :to="{ name: 'players' }">
         <h3>Contrôle des joueurs</h3>
         <p>Créer, modifier, dupliquer et supprimer les joueurs.</p>
+      </RouterLink>
+      <RouterLink class="card" :to="{ name: 'chapitres' }">
+        <h3>Gestion des chapitres</h3>
+        <p>Créer, modifier, dupliquer et gérer les chapitres.</p>
       </RouterLink>
     </div>
   </section>
@@ -34,7 +37,7 @@ h3 {
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
   margin-top: 16px;
 }

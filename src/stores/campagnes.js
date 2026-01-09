@@ -5,7 +5,7 @@ const default_campaigns = [
   {
     id: 1,
     nom: "Campagne de base",
-    etat: "brouillon",
+    etat: "active",
     description: "Exemple de campagne.",
     commentaireMj: "Commentaire visible uniquement en mode MJ.",
     joueurIds: [1],
@@ -184,6 +184,10 @@ export const useCampaignsStore = defineStore("campaigns", () => {
     });
   }
 
+  function setActiveCampaign(id) {
+    activeCampaignId.value = id;
+  }
+
   return {
     list,
     activeCampaignId,
@@ -195,6 +199,7 @@ export const useCampaignsStore = defineStore("campaigns", () => {
     dupliquerCampagne,
     exporterCampagne,
     importerCampagneDepuisObjet,
-    importerCampagneDepuisFichier
+    importerCampagneDepuisFichier,
+    setActiveCampaign
   };
 });

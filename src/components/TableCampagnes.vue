@@ -5,7 +5,7 @@ defineProps({
   liste: { type: Array, required: true }
 });
 
-const emit = defineEmits(["modifier", "dupliquer", "supprimer", "exporter"]);
+const emit = defineEmits(["modifier", "dupliquer", "supprimer", "exporter", "activer"]);
 
 const chaptersStore = useChaptersStore();
 
@@ -35,6 +35,13 @@ function getChapterNames(campagne) {
         <td>{{ campagne.description }}</td>
         <td>{{ getChapterNames(campagne) }}</td>
         <td class="actions">
+          <button 
+            v-if="campagne.etat === 'active'" 
+            @click="emit('activer', campagne.id)"
+            class="activate"
+          >
+            Gérer
+          </button>
           <button @click="emit('modifier', campagne.id)">Éditer</button>
           <button @click="emit('dupliquer', campagne.id)">Dupliquer</button>
           <button @click="emit('exporter', campagne.id)">Exporter</button>
@@ -92,5 +99,16 @@ button.danger {
 
 button.danger:hover {
   background: #fff0f0;
+}
+
+button.activate {
+  background: #42b983;
+  color: white;
+  border-color: #42b983;
+  font-weight: 600;
+}
+
+button.activate:hover {
+  background: #359268;
 }
 </style>
