@@ -281,24 +281,20 @@ textarea {
 }
 
 button {
-  padding: 8px 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background: #fff;
+  padding: 10px 20px;
+  border: 2px solid #95a5a6;
+  border-radius: 5px;
+  background: #95a5a6;
+  color: white;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 button[type="submit"] {
-  background: #2774c8;
+  background: #3498db;
   color: #fff;
-  border-color: #2774c8;
-}
-
-button[type="submit"]:hover {
-  background: #1f5fa0;
-}
-
-button:hover {
-  background: #f4f4f4;
+  border-color: #3498db;
 }
 </style>

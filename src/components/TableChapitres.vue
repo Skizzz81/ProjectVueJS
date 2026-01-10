@@ -80,29 +80,25 @@ td {
 
 .actions {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 button {
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background: #fff;
+  padding: 10px 16px;
+  border: 2px solid #3498db;
+  border-radius: 5px;
+  background: #3498db;
+  color: white;
   cursor: pointer;
-  font-size: 13px;
-}
-
-button:hover {
-  background: #f4f4f4;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 button.danger {
-  color: #c82727;
-  border-color: #c82727;
-}
-
-button.danger:hover {
-  background: #fff0f0;
+  background: #e74c3c;
+  border-color: #e74c3c;
+  color: white;
 }
 </style>
