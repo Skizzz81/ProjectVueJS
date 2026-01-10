@@ -213,7 +213,7 @@ function reprendreIndiceATous() {
               :key="l.id"
               :value="l.id"
             >
-              {{ l.description || l.id }}
+              {{ l.nom }}
             </option>
           </select>
           <button @click="deplacerJoueur">Déplacer</button>
@@ -313,16 +313,14 @@ select {
 }
 
 button {
-  padding: 6px 12px;
-  border: 1px solid #ccc;
+  padding: 10px 16px;
+  border: none;
   border-radius: 4px;
-  background: #fff;
+  background: #3498db;
+  color: white;
   cursor: pointer;
-  font-size: 13px;
-}
-
-button:hover {
-  background: #f4f4f4;
+  font-size: 14px;
+  font-weight: bold;
 }
 
 .button-group {

@@ -36,6 +36,11 @@ const lieux = computed(() => lieuxStore.list);
 
 const chapitres = computed(() => chaptersStore.list);
 
+const lieuActuel = computed(() => {
+  if (!joueur.value || !joueur.value.lieuId) return null;
+  return lieuxStore.trouverLieu(joueur.value.lieuId);
+});
+
 // Quêtes dans le lieu actuel du joueur
 const quetesDansLieu = computed(() => {
   if (!joueur.value || !joueur.value.lieuId) return [];
@@ -49,12 +54,18 @@ function deplacerJoueur() {
     return;
   }
 
+  let lieuId = lieuSelectionne.value;
+  if (!isNaN(lieuId) && !isNaN(parseFloat(lieuId))) {
+    lieuId = Number(lieuId);
+  }
+  
+  const lieu = lieuxStore.trouverLieu(lieuId);
+
   playersStore.modifierJoueur(props.joueurId, {
-    ...joueur.value,
-    lieuId: lieuSelectionne.value
+    lieuId: lieuId
   });
 
-  messageRetour.value = `Joueur déplacé vers : ${lieuSelectionne.value}`;
+  messageRetour.value = `Joueur déplacé vers : ${lieu?.nom || lieuId}`;
   lieuSelectionne.value = '';
   
   setTimeout(() => {
@@ -160,12 +171,12 @@ function actionQuete() {
 
       <div>
         <h4>Se déplacer</h4>
-        <p>Lieu actuel : <strong>{{ joueur?.lieuId || 'Non défini' }}</strong></p>
+        <p>Lieu actuel : <strong>{{ lieuActuel?.nom || 'Non défini' }}</strong></p>
         <div>
           <label>Nouveau lieu :</label>
           <select v-model="lieuSelectionne">
             <option value="">-- Sélectionner un lieu --</option>
-            <option v-for="lieu in lieux" :key="lieu.id" :value="lieu.nom">
+            <option v-for="lieu in lieux" :key="lieu.id" :value="lieu.id">
               {{ lieu.nom }}
             </option>
           </select>
@@ -204,7 +215,7 @@ function actionQuete() {
         <h4>Action sur une quête (dans le lieu actuel)</h4>
         <p v-if="!joueur?.lieuId">Vous devez d'abord vous déplacer dans un lieu</p>
         <div v-else>
-          <p>Quêtes disponibles dans <strong>{{ joueur.lieuId }}</strong> :</p>
+          <p>Quêtes disponibles dans <strong>{{ lieuActuel?.nom || joueur.lieuId }}</strong> :</p>
           <div>
             <label>Type d'action :</label>
             <select v-model="typeActionQuete">
