@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from "vue";
 import { useChaptersStore } from "../stores/chapitres";
+import { usePlayersStore } from "../stores/joueurs";
 
 const props = defineProps({
   campaign: { type: Object, default: null },
@@ -10,26 +11,29 @@ const props = defineProps({
 const emit = defineEmits(["submit", "cancel"]);
 
 const chaptersStore = useChaptersStore();
+const playersStore = usePlayersStore();
 
 const form = ref({
   nom: "",
   etat: "brouillon",
   description: "",
   commentaireMj: "",
-  chapitreIds: []
+  chapitreIds: [],
+  joueurIds: []
 });
 
 watch(
   () => props.campaign,
   (campaign) => {
     if (!campaign) {
-      form.value = {
-        nom: "",
-        etat: "brouillon",
-        description: "",
-        commentaireMj: "",
-        chapitreIds: []
-      };
+    form.value = {
+      nom: "",
+      etat: "brouillon",
+      description: "",
+      commentaireMj: "",
+      chapitreIds: [],
+      joueurIds: []
+    };
       return;
     }
     form.value = {
@@ -37,7 +41,8 @@ watch(
       etat: campaign.etat ?? "brouillon",
       description: campaign.description ?? "",
       commentaireMj: campaign.commentaireMj ?? "",
-      chapitreIds: Array.isArray(campaign.chapitreIds) ? [...campaign.chapitreIds] : []
+      chapitreIds: Array.isArray(campaign.chapitreIds) ? [...campaign.chapitreIds] : [],
+      joueurIds: Array.isArray(campaign.joueurIds) ? [...campaign.joueurIds] : []
     };
   },
   { immediate: true }
@@ -52,13 +57,23 @@ function toggleChapter(chapitreId) {
   }
 }
 
+function togglePlayer(joueurId) {
+  const index = form.value.joueurIds.indexOf(joueurId);
+  if (index === -1) {
+    form.value.joueurIds.push(joueurId);
+  } else {
+    form.value.joueurIds.splice(index, 1);
+  }
+}
+
 function envoyer() {
   emit("submit", {
     nom: form.value.nom,
     etat: form.value.etat,
     description: form.value.description,
     commentaireMj: form.value.commentaireMj,
-    chapitreIds: form.value.chapitreIds
+    chapitreIds: form.value.chapitreIds,
+    joueurIds: form.value.joueurIds
   });
 }
 </script>
@@ -98,6 +113,26 @@ function envoyer() {
           </div>
           <p v-if="chaptersStore.list.length === 0" class="no-chapters">
             Aucun chapitre disponible
+          </p>
+        </div>
+      </label>
+
+      <label>
+        Joueurs
+        <div class="chapters-selection">
+          <div v-for="j in playersStore.list" :key="j.id" class="checkbox-item">
+            <label>
+              <input 
+                type="checkbox" 
+                :value="j.id" 
+                :checked="form.joueurIds.includes(j.id)"
+                @change="togglePlayer(j.id)"
+              />
+              {{ j.nom }}
+            </label>
+          </div>
+          <p v-if="playersStore.list.length === 0" class="no-chapters">
+            Aucun joueur disponible
           </p>
         </div>
       </label>

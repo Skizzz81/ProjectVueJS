@@ -22,7 +22,7 @@ function getChapterNames(campagne) {
     <thead>
       <tr>
         <th>Nom</th>
-        <th>État</th>
+        <th>Etat</th>
         <th>Description</th>
         <th>Chapitres</th>
         <th>Actions</th>
@@ -35,14 +35,21 @@ function getChapterNames(campagne) {
         <td>{{ campagne.description }}</td>
         <td>{{ getChapterNames(campagne) }}</td>
         <td class="actions">
-          <button 
-            v-if="campagne.etat === 'active'" 
+          <button
+            v-if="campagne.etat === 'active'"
             @click="emit('activer', campagne.id)"
             class="activate"
           >
-            Gérer
+            Gerer
           </button>
-          <button @click="emit('modifier', campagne.id)">Éditer</button>
+          <button
+            v-else
+            @click="emit('activer', campagne.id)"
+            class="activate"
+          >
+            Activer
+          </button>
+          <button @click="emit('modifier', campagne.id)">Editer</button>
           <button @click="emit('dupliquer', campagne.id)">Dupliquer</button>
           <button @click="emit('exporter', campagne.id)">Exporter</button>
           <button class="danger" @click="emit('supprimer', campagne.id)">Supprimer</button>
