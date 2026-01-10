@@ -6,6 +6,9 @@ import ControlPlayersView from "../views/ControlPlayersView.vue";
 import ControlChapitresView from "../views/ControlChapitresView.vue";
 import MjView from "../views/MjView.vue";
 import PlayerView from "../views/PlayerView.vue";
+import ProgressionView from "../views/ProgressionView.vue";
+import InventaireView from "../views/InventaireView.vue";
+import ActionsView from "../views/ActionsView.vue";
 import ControlContentView from "../views/ControlContentView.vue";
 import ControlChaptersView from "../views/ControlChaptersView.vue";
 import ControlQuestsView from "../views/ControlQuestsView.vue";
@@ -58,6 +61,21 @@ const router = createRouter({
       path: "/chapitres",
       name: "chapitres",
       component: ControlChapitresView
+    },
+    {
+      path: "/joueur/progression",
+      name: "progression",
+      component: ProgressionView
+    },
+    {
+      path: "/joueur/inventaire",
+      name: "inventaire",
+      component: InventaireView
+    },
+    {
+      path: "/joueur/actions",
+      name: "actions",
+      component: ActionsView
     }
     
   ]

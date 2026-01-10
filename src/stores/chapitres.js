@@ -6,7 +6,7 @@ const default_chapters = [
     id: 1,
     campagneId: 1,
     nom: "Chapitre 1",
-    etat: "inactif",
+    etat: "actif",
     description: "Description du chapitre.",
     commentaireMj: "Commentaire visible uniquement en mode MJ.",
     motPasseActivation: "secret",

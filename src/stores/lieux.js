@@ -21,7 +21,7 @@ export const usePlacesStore = defineStore("places", () => {
   });
 
   function trouverLieu(id) {
-    return list.value.find((lieu) => lieu.id === id);
+    return list.value.find((lieu) => lieu.id == id);
   }
 
 

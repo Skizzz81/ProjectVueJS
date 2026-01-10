@@ -24,7 +24,12 @@ function afficherListe(ids, trouverFn) {
 function afficherLieu(id) {
   if (id === null || id === undefined || id === "") return "-";
   const lieu = lieuxStore.trouverLieu(id);
-  return lieu?.nom ;
+  if (!lieu) {
+    console.log("Lieu non trouvé pour id:", id, "Type:", typeof id);
+    console.log("Lieux disponibles:", lieuxStore.list);
+    return "-";
+  }
+  return lieu.nom;
 }
 </script>
 
