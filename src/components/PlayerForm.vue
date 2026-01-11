@@ -29,7 +29,15 @@ watch(
   () => props.player,
   (player) => {
     if (!player) {
-      form.value = { nom: "", etat: "vivant" };
+      form.value = {
+        nom: "",
+        etat: "vivant",
+        description: "",
+        commentaireMj: "",
+        lieuId: "",
+        inventaireObjetsIds: [],
+        inventaireIndicesIds: []
+      };
       return;
     }
     form.value = {

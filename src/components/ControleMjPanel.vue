@@ -1,5 +1,6 @@
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import { useCampaignsStore } from "../stores/campagnes";
 import { useChaptersStore } from "../stores/chapitres";
 import { usePlayersStore } from "../stores/joueurs";
 import { useQuestsStore } from "../stores/quest";
@@ -13,6 +14,35 @@ const questsStore = useQuestsStore();
 const placesStore = usePlacesStore();
 const itemsStore = useItemsStore();
 const cluesStore = useCluesStore();
+const campaignsStore = useCampaignsStore();
+
+const campagneActive = computed(() =>
+  campaignsStore.trouverCampaign(campaignsStore.activeCampaignId)
+);
+
+const chapitresActifs = computed(() => {
+  const id = campagneActive.value?.id;
+  if (!id) return [];
+  return chaptersStore.list.filter((c) => c.campagneId === id);
+});
+
+const joueursActifs = computed(() => {
+  const ids = campagneActive.value?.joueurIds;
+  if (!Array.isArray(ids)) return [];
+  return playersStore.list.filter((j) => ids.includes(j.id));
+});
+
+const lieuxActifs = computed(() => {
+  return placesStore.list;
+});
+
+const objetsActifs = computed(() => {
+  return itemsStore.list;
+});
+
+const indicesActifs = computed(() => {
+  return cluesStore.list;
+});
 
 const chapitreId = ref(null);
 const chapitreEtat = ref("inactif");
@@ -139,7 +169,7 @@ function reprendreIndiceATous() {
         <select v-model="chapitreId">
           <option :value="null">— choisir —</option>
           <option
-            v-for="chap in chaptersStore.list"
+            v-for="chap in chapitresActifs"
             :key="chap.id"
             :value="chap.id"
           >
@@ -180,7 +210,7 @@ function reprendreIndiceATous() {
         <select v-model="joueurId">
           <option :value="null">— choisir —</option>
           <option
-            v-for="p in playersStore.list"
+            v-for="p in joueursActifs"
             :key="p.id"
             :value="p.id"
           >
@@ -199,7 +229,7 @@ function reprendreIndiceATous() {
           <select v-model="joueurDeplacementId">
             <option :value="null">— choisir joueur —</option>
             <option
-              v-for="p in playersStore.list"
+              v-for="p in joueursActifs"
               :key="p.id"
               :value="p.id"
             >
@@ -209,7 +239,7 @@ function reprendreIndiceATous() {
           <select v-model="joueurDestinationLieuId">
             <option :value="null">— aucun —</option>
             <option
-              v-for="l in placesStore.list"
+              v-for="l in lieuxActifs"
               :key="l.id"
               :value="l.id"
             >
@@ -225,7 +255,7 @@ function reprendreIndiceATous() {
         <select v-model="objetJoueurId">
           <option :value="null">— choisir joueur —</option>
           <option
-            v-for="p in playersStore.list"
+            v-for="p in joueursActifs"
             :key="p.id"
             :value="p.id"
           >
@@ -235,7 +265,7 @@ function reprendreIndiceATous() {
         <select v-model="objetId">
           <option :value="null">— choisir objet —</option>
           <option
-            v-for="it in itemsStore.list"
+            v-for="it in objetsActifs"
             :key="it.id"
             :value="it.id"
           >
@@ -253,7 +283,7 @@ function reprendreIndiceATous() {
         <select v-model="indiceId">
           <option :value="null">— choisir indice —</option>
           <option
-            v-for="i in cluesStore.list"
+            v-for="i in indicesActifs"
             :key="i.id"
             :value="i.id"
           >
@@ -341,3 +371,4 @@ button {
   margin-bottom: 6px;
 }
 </style>
+
