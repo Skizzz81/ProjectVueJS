@@ -4,18 +4,33 @@ import { ref, watchEffect } from 'vue';
 const allowed_statuses  = ['inactive', 'active', 'achieved', 'cancelled'];
 const default_quests    = [
     {
-        id:                     1,
-        name:                   "Première quête",
-        status:                 'active',
-        description:            "Description de la quête",
-        commentary:             "",
-        activation_password:    "",
-        resolution_password:    "",
-        rewards:                [],
-        chapter_id:             1,
-        place_id:               1
+        id: 1,
+        nom: "Retrouver le symbole",
+        etat: 'active',
+        description: "Explorer le lieu pour trouver le symbole.",
+        lieu: "Temple",
+        commentaire: "",
+        motDePasseResolution: "SYMBOLE"
     },
-]
+    {
+        id: 2,
+        nom: "Delivrer l'ombre",
+        etat: 'inactive',
+        description: "Liberer l'esprit prisonnier.",
+        lieu: "Crypte",
+        commentaire: "",
+        motDePasseResolution: "LIBRE"
+    },
+    {
+        id: 3,
+        nom: "Message secret",
+        etat: 'inactive',
+        description: "Trouver l'indice cache.",
+        lieu: "Bibliotheque",
+        commentaire: "",
+        motDePasseResolution: "CODE"
+    }
+];
 
 export const useQuestsStore = defineStore('quest', () => {
     // Helpers
@@ -30,9 +45,11 @@ export const useQuestsStore = defineStore('quest', () => {
     // Watchers
     watchEffect(() => {localStorage.setItem('quests', JSON.stringify(list.value));});
 
-    // CRUD Actions
-    function addQuest(data = {}){
-        const status = data.status || 'inactive';
+    // Expose
+    function ajouterQuete(data = {}){
+        const allowedEtats = ['inactive','active','terminee','abandonnée'];
+        const etat = data.etat || 'inactive';
+        if (!allowedEtats.includes(etat)) return { success: false, error: 'etat invalide' };
 
         if (!allowed_statuses.includes(status)) return { success: false, error: "État invalide" };
 
@@ -54,10 +71,11 @@ export const useQuestsStore = defineStore('quest', () => {
         const quest = findQuest(id);
         if(!quest) return { success: false, error: "Quête introuvable" };
 
-        if(data.status !== undefined){
-            if (!allowed_statuses.includes(data.status)) return { success: false, error: "État invalide" };
-            quest.status = data.status;
-        };
+        if (data.etat !== undefined) {
+            const allowedEtats = ['inactive','active','terminee','abandonnée'];
+            if (!allowedEtats.includes(data.etat)) return { success: false, error: 'etat invalide' };
+            quete.etat = data.etat;
+        }
 
         if (data.nom !== undefined) quest.nom = data.nom;
         if (data.description !== undefined) quest.description = data.description;
@@ -77,9 +95,9 @@ export const useQuestsStore = defineStore('quest', () => {
 
     return {
         list,
-        findQuest,
-        addQuest,
-        modifyQuest,
-        deleteQuest
+        ajouterQuete,
+        modifierQuete,
+        supprimerQuete,
+        findQuest
     };
 });

@@ -1,7 +1,8 @@
 <script setup>
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useChaptersStore } from "../stores/chapitres";
 import { usePlayersStore } from "../stores/joueurs";
+import { useCampaignsStore } from "../stores/campagnes";
 
 const props = defineProps({
   campaign: { type: Object, default: null },
@@ -12,6 +13,26 @@ const emit = defineEmits(["submit", "cancel"]);
 
 const chaptersStore = useChaptersStore();
 const playersStore = usePlayersStore();
+const campaignsStore = useCampaignsStore();
+
+const chapitresDisponibles = computed(() => {
+  const currentId = props.campaign?.id ?? null;
+  return chaptersStore.list.filter((chap) => (
+    chap.campagneId === null || chap.campagneId === undefined || chap.campagneId === currentId
+  ));
+});
+
+const joueursDisponibles = computed(() => {
+  const currentId = props.campaign?.id ?? null;
+  const idsUtilises = new Set();
+  campaignsStore.list.forEach((campagne) => {
+    if (campagne.id === currentId) return;
+    if (Array.isArray(campagne.joueurIds)) {
+      campagne.joueurIds.forEach((id) => idsUtilises.add(id));
+    }
+  });
+  return playersStore.list.filter((j) => !idsUtilises.has(j.id));
+});
 
 const form = ref({
   nom: "",
@@ -100,7 +121,7 @@ function envoyer() {
       <label>
         Chapitres
         <div class="chapters-selection">
-          <div v-for="chap in chaptersStore.list" :key="chap.id" class="checkbox-item">
+          <div v-for="chap in chapitresDisponibles" :key="chap.id" class="checkbox-item">
             <label>
               <input 
                 type="checkbox" 
@@ -111,7 +132,7 @@ function envoyer() {
               {{ chap.nom }}
             </label>
           </div>
-          <p v-if="chaptersStore.list.length === 0" class="no-chapters">
+          <p v-if="chapitresDisponibles.length === 0" class="no-chapters">
             Aucun chapitre disponible
           </p>
         </div>
@@ -120,7 +141,7 @@ function envoyer() {
       <label>
         Joueurs
         <div class="chapters-selection">
-          <div v-for="j in playersStore.list" :key="j.id" class="checkbox-item">
+          <div v-for="j in joueursDisponibles" :key="j.id" class="checkbox-item">
             <label>
               <input 
                 type="checkbox" 
@@ -131,7 +152,7 @@ function envoyer() {
               {{ j.nom }}
             </label>
           </div>
-          <p v-if="playersStore.list.length === 0" class="no-chapters">
+          <p v-if="joueursDisponibles.length === 0" class="no-chapters">
             Aucun joueur disponible
           </p>
         </div>
@@ -197,25 +218,21 @@ textarea {
 }
 
 button {
-  padding: 8px 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background: #fff;
+  padding: 10px 20px;
+  border: 2px solid #95a5a6;
+  border-radius: 5px;
+  background: #95a5a6;
+  color: white;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 button[type="submit"] {
-  background: #2774c8;
+  background: #3498db;
   color: #fff;
-  border-color: #2774c8;
-}
-
-button[type="submit"]:hover {
-  background: #1f5fa0;
-}
-
-button:hover {
-  background: #f4f4f4;
+  border-color: #3498db;
 }
 
 .chapters-selection {

@@ -4,9 +4,15 @@ import { ref, watchEffect } from "vue";
 const default_clues = [
   {
     id: 1,
-    nom: "Indice 1",
-    description: "Description de l'indice.",
-    commentaireMj: "Commentaire visible uniquement en mode MJ."
+    nom: "Note gravee",
+    description: "Une note gravee sur une pierre.",
+    commentaireMj: "Indice pour le chapitre 1."
+  },
+  {
+    id: 2,
+    nom: "Message plie",
+    description: "Un message plie dans un livre.",
+    commentaireMj: "Indice pour la campagne beta."
   }
 ];
 

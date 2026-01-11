@@ -4,12 +4,21 @@ import { ref, watchEffect } from "vue";
 const default_campaigns = [
   {
     id: 1,
-    nom: "Campagne de base",
+    nom: "Campagne alpha",
     etat: "active",
-    description: "Exemple de campagne.",
-    commentaireMj: "Commentaire visible uniquement en mode MJ.",
-    joueurIds: [1,2],
-    chapitreIds: [1]
+    description: "Campagne de test.",
+    commentaireMj: "Notes MJ pour la campagne alpha.",
+    joueurIds: [1, 2],
+    chapitreIds: [1, 2]
+  },
+  {
+    id: 2,
+    nom: "Campagne beta",
+    etat: "disponible",
+    description: "Deuxieme campagne de test.",
+    commentaireMj: "Notes MJ pour la campagne beta.",
+    joueurIds: [3],
+    chapitreIds: [3]
   }
 ];
 

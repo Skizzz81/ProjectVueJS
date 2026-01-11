@@ -5,9 +5,11 @@ import FormulaireCampagne from "../components/FormulaireCampagne.vue";
 import TableCampagnes from "../components/TableCampagnes.vue";
 import ControleMjPanel from "../components/ControleMjPanel.vue";
 import { useCampaignsStore } from "../stores/campagnes";
+import { useChaptersStore } from "../stores/chapitres";
 
 const router = useRouter();
 const campaignsStore = useCampaignsStore();
+const chaptersStore = useChaptersStore();
 const editingCampaignId = ref(null);
 const creating = ref(false);
 
@@ -33,6 +35,7 @@ function enregistrerCampagne(data) {
   if (data.etat === "active") {
     campaignsStore.setActiveCampaign(editingCampaignId.value);
   }
+  syncChapitresCampagne(editingCampaignId.value, data.chapitreIds || []);
   editingCampaignId.value = null;
 }
 
@@ -40,6 +43,9 @@ function ajouterCampagne(data) {
   const res = campaignsStore.ajouterCampagne(data);
   if (data.etat === "active" && res?.campagne?.id) {
     campaignsStore.setActiveCampaign(res.campagne.id);
+  }
+  if (res?.campagne?.id) {
+    syncChapitresCampagne(res.campagne.id, data.chapitreIds || []);
   }
   creating.value = false;
 }
@@ -74,6 +80,21 @@ async function importerCampagne(ev) {
 function activerCampagne(id) {
   campaignsStore.setActiveCampaign(id);
   router.push({ name: "campagneactive" });
+}
+
+function syncChapitresCampagne(campagneId, chapitreIds) {
+  const selection = new Set(chapitreIds || []);
+  chaptersStore.list.forEach((chap) => {
+    const estSelectionne = selection.has(chap.id);
+    const estDansCampagne = chap.campagneId === campagneId;
+
+    if (estDansCampagne && !estSelectionne) {
+      chaptersStore.modifierChapitre(chap.id, { campagneId: null });
+    }
+    if (estSelectionne && !estDansCampagne) {
+      chaptersStore.modifierChapitre(chap.id, { campagneId });
+    }
+  });
 }
 </script>
 

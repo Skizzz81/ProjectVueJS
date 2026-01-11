@@ -4,15 +4,21 @@ import { ref, watchEffect } from "vue";
 const default_items = [
   {
     id: 1,
-    nom: "Objet 1",
-    description: "Description de l'objet.",
-    commentaireMj: "Commentaire visible uniquement en mode MJ."
+    nom: "Couteau",
+    description: "Petit couteau use.",
+    commentaireMj: "Objet de depart."
   },
   {
     id: 2,
-    nom: "Objet 2",
-    description: "Objet de recompense.",
-    commentaireMj: "Commentaire visible uniquement en mode MJ."
+    nom: "Clef",
+    description: "Clef rouillee.",
+    commentaireMj: "Ouvre la crypte."
+  },
+  {
+    id: 3,
+    nom: "Amulette",
+    description: "Amulette ancienne.",
+    commentaireMj: "Objet rare de la campagne beta."
   }
 ];
 

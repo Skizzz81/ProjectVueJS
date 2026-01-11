@@ -29,7 +29,15 @@ watch(
   () => props.player,
   (player) => {
     if (!player) {
-      form.value = { nom: "", etat: "vivant" };
+      form.value = {
+        nom: "",
+        etat: "vivant",
+        description: "",
+        commentaireMj: "",
+        lieuId: "",
+        inventaireObjetsIds: [],
+        inventaireIndicesIds: []
+      };
       return;
     }
     form.value = {
@@ -50,14 +58,28 @@ watch(
 );
 
 function envoyer() {
+  let lieuId = form.value.lieuId;
+  if (lieuId === "" || lieuId === null) {
+    lieuId = null;
+  } else if (!isNaN(lieuId) && !isNaN(parseFloat(lieuId))) {
+    lieuId = Number(lieuId);
+  }
+  
+  const convertirId = (id) => {
+    if (!isNaN(id) && !isNaN(parseFloat(id))) {
+      return Number(id);
+    }
+    return id;
+  };
+  
   emit("submit", {
     nom: form.value.nom,
     etat: form.value.etat,
     description: form.value.description,
     commentaireMj: form.value.commentaireMj,
-    lieuId: form.value.lieuId === "" ? null : form.value.lieuId,
-    inventaireObjetsIds: form.value.inventaireObjetsIds,
-    inventaireIndicesIds: form.value.inventaireIndicesIds
+    lieuId: lieuId,
+    inventaireObjetsIds: form.value.inventaireObjetsIds.map(convertirId),
+    inventaireIndicesIds: form.value.inventaireIndicesIds.map(convertirId)
   });
 }
 </script>

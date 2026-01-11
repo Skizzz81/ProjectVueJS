@@ -4,10 +4,24 @@ import { ref, watchEffect } from "vue";
 const default_places = [
   {
     id: 1,
-    nom: "Lieu 1",
-    description: "Description du lieu.",
-    commentaireMj: "Coommentaire ",
+    nom: "Temple",
+    description: "Ancien temple en ruines.",
+    commentaireMj: "Lieu principal pour le chapitre 1.",
     joueurIds: [1]
+  },
+  {
+    id: 2,
+    nom: "Crypte",
+    description: "Crypte sous la ville.",
+    commentaireMj: "Lieu sombre et dangereux.",
+    joueurIds: [2]
+  },
+  {
+    id: 3,
+    nom: "Bibliotheque",
+    description: "Vieille bibliotheque.",
+    commentaireMj: "Lieu de la campagne beta.",
+    joueurIds: [3]
   }
 ];
 
@@ -21,7 +35,7 @@ export const usePlacesStore = defineStore("places", () => {
   });
 
   function trouverLieu(id) {
-    return list.value.find((lieu) => lieu.id === id);
+    return list.value.find((lieu) => lieu.id == id);
   }
 
 
