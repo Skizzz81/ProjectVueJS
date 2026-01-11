@@ -104,7 +104,7 @@ function envoyer() {
         <select v-model="form.etat">
           <option value="inactif">inactif</option>
           <option value="actif">actif</option>
-          <option value="terminé">terminé</option>
+          <option value="termine">termine</option>
         </select>
       </label>
 

@@ -1,8 +1,10 @@
 <script setup>
 import { computed } from "vue";
 import { usePlayersStore } from "../stores/joueurs";
+import { useCampaignsStore } from "../stores/campagnes";
 
 const playersStore = usePlayersStore();
+const campaignsStore = useCampaignsStore();
 
 const emit = defineEmits(['update:modelValue']);
 
@@ -13,7 +15,16 @@ const props = defineProps({
   }
 });
 
-const joueurs = computed(() => playersStore.list);
+const campagneActive = computed(() => {
+  const id = campaignsStore.activeCampaignId?.value ?? campaignsStore.activeCampaignId;
+  return campaignsStore.list.find((campagne) => String(campagne.id) === String(id));
+});
+
+const joueurs = computed(() => {
+  if (!campagneActive.value) return [];
+  const ids = new Set((campagneActive.value.joueurIds || []).map((id) => String(id)));
+  return playersStore.list.filter((joueur) => ids.has(String(joueur.id)));
+});
 
 function selectionnerJoueur(value) {
   // Convertir en nombre si c'est un nombre, sinon garder la valeur

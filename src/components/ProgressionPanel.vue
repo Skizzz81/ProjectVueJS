@@ -13,7 +13,7 @@ const cluesStore = useCluesStore();
 const emit = defineEmits(['afficherDetail']);
 
 const rechercheTexte = ref('');
-const filtreStatut = ref('tous'); // 'tous', 'actif', 'terminé', 'inactif'
+const filtreStatut = ref('tous'); // 'tous', 'actif', 'termine', 'inactif'
 
 // Données filtrées
 const chapitresActifs = computed(() => {
@@ -21,7 +21,7 @@ const chapitresActifs = computed(() => {
 });
 
 const chapitresTermines = computed(() => {
-  return chaptersStore.list.filter(c => c.etat === 'terminé');
+  return chaptersStore.list.filter(c => c.etat === 'termine');
 });
 
 const quetesActives = computed(() => {
@@ -29,7 +29,7 @@ const quetesActives = computed(() => {
 });
 
 const quetesTerminees = computed(() => {
-  return questsStore.list.filter(q => q.etat === 'terminée');
+  return questsStore.list.filter(q => q.etat === 'terminee');
 });
 
 // Fonction de recherche et filtrage
@@ -42,9 +42,9 @@ const elementsFiltres = computed(() => {
     if (filtreStatut.value === 'actif') {
       chapitres = chapitres.filter(c => c.etat === 'actif');
       quetes = quetes.filter(q => q.etat === 'active');
-    } else if (filtreStatut.value === 'terminé') {
-      chapitres = chapitres.filter(c => c.etat === 'terminé');
-      quetes = quetes.filter(q => q.etat === 'terminée');
+    } else if (filtreStatut.value === 'termine') {
+      chapitres = chapitres.filter(c => c.etat === 'termine');
+      quetes = quetes.filter(q => q.etat === 'terminee');
     } else if (filtreStatut.value === 'inactif') {
       chapitres = chapitres.filter(c => c.etat === 'inactif');
       quetes = quetes.filter(q => q.etat === 'inactive');
@@ -91,7 +91,7 @@ function afficherDetail(type, id) {
         <option value="tous">Tous</option>
         <option value="actif">Actifs</option>
         <option value="inactif">Inactifs</option>
-        <option value="terminé">Terminés</option>
+        <option value="termine">termines</option>
       </select>
     </div>
 
@@ -159,7 +159,7 @@ function afficherDetail(type, id) {
       </div>
 
       <div>
-        <h3>Chapitres terminés</h3>
+        <h3>Chapitres termines</h3>
         <div v-if="chapitresTermines.length > 0">
           <div 
             v-for="chap in chapitresTermines" 
@@ -170,11 +170,11 @@ function afficherDetail(type, id) {
             <p>{{ chap.description }}</p>
           </div>
         </div>
-        <p v-else>Aucun chapitre terminé</p>
+        <p v-else>Aucun chapitre termine</p>
       </div>
 
       <div>
-        <h3>Quêtes terminées</h3>
+        <h3>Quêtes terminees</h3>
         <div v-if="quetesTerminees.length > 0">
           <div 
             v-for="q in quetesTerminees" 
@@ -185,7 +185,7 @@ function afficherDetail(type, id) {
             <p>{{ q.description }}</p>
           </div>
         </div>
-        <p v-else>Aucune quête terminée</p>
+        <p v-else>Aucune quête terminee</p>
       </div>
     </div>
   </div>

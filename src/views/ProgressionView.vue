@@ -80,7 +80,7 @@ const detailElement = computed(() => {
             <p>{{ detailElement.description || '-' }}</p>
           </div>
 
-          <div v-if="detailElement.etat === 'terminé'">
+          <div v-if="detailElement.etat === 'termine'">
             <h3>Récompenses obtenues</h3>
             <div v-if="detailElement.recompenses.objets.length > 0">
               <strong>Objets :</strong>

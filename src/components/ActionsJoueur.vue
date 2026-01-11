@@ -4,11 +4,13 @@ import { usePlayersStore } from "../stores/joueurs";
 import { useChaptersStore } from "../stores/chapitres";
 import { useQuestsStore } from "../stores/quest";
 import { usePlacesStore } from "../stores/lieux";
+import { useCampaignsStore } from "../stores/campagnes";
 
 const playersStore = usePlayersStore();
 const chaptersStore = useChaptersStore();
 const questsStore = useQuestsStore();
 const lieuxStore = usePlacesStore();
+const campaignsStore = useCampaignsStore();
 
 const props = defineProps({
   joueurId: {
@@ -17,37 +19,64 @@ const props = defineProps({
   }
 });
 
-const joueur = computed(() => {
-  return playersStore.trouverJoueur(props.joueurId);
+const joueur = computed(() => playersStore.trouverJoueur(props.joueurId));
+
+const lieuSelectionne = ref("");
+const chapitreIdAction = ref("");
+const motDePasseChapitre = ref("");
+const queteIdAction = ref("");
+const motDePasseQuete = ref("");
+const typeActionChapitre = ref("activer");
+const typeActionQuete = ref("activer");
+
+const messageRetour = ref("");
+
+const campagneActive = computed(() => {
+  const id = campaignsStore.activeCampaignId?.value ?? campaignsStore.activeCampaignId;
+  return campaignsStore.list.find((campagne) => String(campagne.id) === String(id));
 });
 
-// Données pour les actions
-const lieuSelectionne = ref('');
-const chapitreIdAction = ref('');
-const motDePasseChapitre = ref('');
-const queteIdAction = ref('');
-const motDePasseQuete = ref('');
-const typeActionChapitre = ref('activer'); // 'activer' ou 'completer'
-const typeActionQuete = ref('activer'); // 'activer' ou 'completer'
-
-const messageRetour = ref('');
+const joueurDansCampagne = computed(() => {
+  if (!campagneActive.value) return false;
+  return (campagneActive.value.joueurIds || []).some(
+    (id) => String(id) === String(props.joueurId)
+  );
+});
 
 const lieux = computed(() => lieuxStore.list);
 
-const chapitres = computed(() => chaptersStore.list);
+const chapitres = computed(() => {
+  if (!campagneActive.value) return [];
+  const ids = (campagneActive.value.chapitreIds || []).map((id) => String(id));
+  return chaptersStore.list.filter((chap) => ids.includes(String(chap.id)));
+});
+
+const queteIdsCampagne = computed(() => {
+  const ids = new Set();
+  chapitres.value.forEach((chap) => {
+    (chap.queteIds || []).forEach((id) => ids.add(String(id)));
+  });
+  return ids;
+});
 
 const lieuActuel = computed(() => {
   if (!joueur.value || !joueur.value.lieuId) return null;
   return lieuxStore.trouverLieu(joueur.value.lieuId);
 });
 
-// Quêtes dans le lieu actuel du joueur
 const quetesDansLieu = computed(() => {
-  if (!joueur.value || !joueur.value.lieuId) return [];
-  return questsStore.list.filter(q => q.lieu === joueur.value.lieuId);
+  if (!campagneActive.value || !joueur.value || !joueur.value.lieuId) return [];
+  const lieuNom = lieuActuel.value?.nom;
+  return questsStore.list.filter((quete) => {
+    if (!queteIdsCampagne.value.has(String(quete.id))) return false;
+    return (
+      quete.lieu === joueur.value.lieuId ||
+      String(quete.lieu) === String(joueur.value.lieuId) ||
+      (lieuNom && quete.lieu === lieuNom)
+    );
+  });
 });
 
-// Actions
 function deplacerJoueur() {
   if (!lieuSelectionne.value) {
     messageRetour.value = 'Veuillez sélectionner un lieu';
@@ -58,7 +87,7 @@ function deplacerJoueur() {
   if (!isNaN(lieuId) && !isNaN(parseFloat(lieuId))) {
     lieuId = Number(lieuId);
   }
-  
+
   const lieu = lieuxStore.trouverLieu(lieuId);
 
   playersStore.modifierJoueur(props.joueurId, {
@@ -85,73 +114,69 @@ function actionChapitre() {
     return;
   }
 
-  // Vérification du mot de passe
-  const motDePasseAttendu = typeActionChapitre.value === 'activer' 
-    ? chapitre.motDePasseActivation 
-    : chapitre.motDePasseCompletion;
+  const motDePasseAttendu = typeActionChapitre.value === "activer"
+    ? chapitre.motPasseActivation
+    : chapitre.motPasseResolution;
 
   if (motDePasseChapitre.value !== motDePasseAttendu) {
-    messageRetour.value = 'Mot de passe incorrect';
+    messageRetour.value = "Mot de passe incorrect";
     return;
   }
 
-  // Mise à jour de l'état du chapitre
-  const nouvelEtat = typeActionChapitre.value === 'activer' ? 'actif' : 'terminé';
-  chaptersStore.updateChapter(chapitreIdAction.value, {
-    ...chapitre,
-    etat: nouvelEtat
-  });
+  const nouvelEtat = typeActionChapitre.value === "activer" ? "actif" : "termine";
+  chaptersStore.modifierChapitre(chapitreIdAction.value, { etat: nouvelEtat });
 
-  messageRetour.value = `Chapitre ${typeActionChapitre.value === 'activer' ? 'activé' : 'complété'} avec succès`;
-  chapitreIdAction.value = '';
-  motDePasseChapitre.value = '';
-  
+  messageRetour.value = `Chapitre ${typeActionChapitre.value === "activer" ? "active" : "complete"} avec succes`;
+  chapitreIdAction.value = "";
+  motDePasseChapitre.value = "";
+
   setTimeout(() => {
-    messageRetour.value = '';
+    messageRetour.value = "";
   }, 3000);
 }
 
 function actionQuete() {
   if (!queteIdAction.value) {
-    messageRetour.value = 'Veuillez sélectionner une quête';
+    messageRetour.value = "Veuillez selectionner une quete";
     return;
   }
 
   const quete = questsStore.findQuest(queteIdAction.value);
   if (!quete) {
-    messageRetour.value = 'Quête non trouvée';
+    messageRetour.value = "Quete non trouvee";
     return;
   }
 
-  // Vérifier que la quête est dans le lieu actuel
-  if (quete.lieu !== joueur.value.lieuId) {
-    messageRetour.value = 'Cette quête n\'est pas disponible dans votre lieu actuel';
+  const lieuNom = lieuActuel.value?.nom;
+  const queteDansLieu =
+    quete.lieu === joueur.value.lieuId ||
+    String(quete.lieu) === String(joueur.value.lieuId) ||
+    (lieuNom && quete.lieu === lieuNom);
+  if (!queteDansLieu) {
+    messageRetour.value = "Cette quete n'est pas disponible dans le lieu actuel";
     return;
   }
 
-  // Vérification du mot de passe
-  const motDePasseAttendu = typeActionQuete.value === 'activer' 
-    ? quete.motDePasseActivation 
-    : quete.motDePasseCompletion;
+  if (typeActionQuete.value === "completer" && quete.motDePasseResolution) {
+    if (motDePasseQuete.value !== quete.motDePasseResolution) {
+      messageRetour.value = "Mot de passe incorrect";
+      return;
+    }
+  }
 
-  if (motDePasseQuete.value !== motDePasseAttendu) {
-    messageRetour.value = 'Mot de passe incorrect';
+  const nouvelEtat = typeActionQuete.value === "activer" ? "active" : "termine";
+  const resultat = questsStore.modifierQuete(queteIdAction.value, { etat: nouvelEtat });
+  if (!resultat?.success) {
+    messageRetour.value = "Etat invalide pour la quete";
     return;
   }
 
-  // Mise à jour de l'état de la quête
-  const nouvelEtat = typeActionQuete.value === 'activer' ? 'active' : 'terminée';
-  questsStore.updateQuest(queteIdAction.value, {
-    ...quete,
-    etat: nouvelEtat
-  });
+  messageRetour.value = `Quete ${typeActionQuete.value === "activer" ? "activee" : "completee"} avec succes`;
+  queteIdAction.value = "";
+  motDePasseQuete.value = "";
 
-  messageRetour.value = `Quête ${typeActionQuete.value === 'activer' ? 'activée' : 'complétée'} avec succès`;
-  queteIdAction.value = '';
-  motDePasseQuete.value = '';
-  
   setTimeout(() => {
-    messageRetour.value = '';
+    messageRetour.value = "";
   }, 3000);
 }
 </script>
@@ -161,7 +186,16 @@ function actionQuete() {
     <h3>Actions du joueur</h3>
 
     <div v-if="!joueurId">
-      <p>Sélectionnez un joueur pour effectuer des actions</p>
+      <p>Selectionnez un joueur pour effectuer des actions</p>
+    </div>
+
+    <div v-else-if="!campagneActive">
+      <p>Aucune campagne active.</p>
+    </div>
+
+    <div v-else-if="!joueurDansCampagne">
+
+      <p>Ce joueur n'appartient pas a la campagne active.</p>
     </div>
 
     <div v-else>
@@ -175,12 +209,16 @@ function actionQuete() {
         <div>
           <label>Nouveau lieu :</label>
           <select v-model="lieuSelectionne">
-            <option value="">-- Sélectionner un lieu --</option>
+
+
+
+            <option value="">-- Selectionner un lieu --</option>
             <option v-for="lieu in lieux" :key="lieu.id" :value="lieu.id">
               {{ lieu.nom }}
             </option>
           </select>
-          <button @click="deplacerJoueur">Se déplacer</button>
+
+          <button @click="deplacerJoueur">Se deplacer</button>
         </div>
       </div>
 
@@ -196,7 +234,7 @@ function actionQuete() {
         <div>
           <label>Chapitre :</label>
           <select v-model="chapitreIdAction">
-            <option value="">-- Sélectionner un chapitre --</option>
+            <option value="">-- Selectionner un chapitre --</option>
             <option v-for="chap in chapitres" :key="chap.id" :value="chap.id">
               {{ chap.nom }} ({{ chap.etat }})
             </option>
@@ -207,26 +245,26 @@ function actionQuete() {
           <input v-model="motDePasseChapitre" type="password" placeholder="Mot de passe" />
         </div>
         <button @click="actionChapitre">
-          {{ typeActionChapitre === 'activer' ? 'Activer' : 'Compléter' }} le chapitre
+          {{ typeActionChapitre === "activer" ? "Activer" : "Completer" }} le chapitre
         </button>
       </div>
 
       <div>
-        <h4>Action sur une quête (dans le lieu actuel)</h4>
-        <p v-if="!joueur?.lieuId">Vous devez d'abord vous déplacer dans un lieu</p>
+        <h4>Action sur une quete (dans le lieu actuel)</h4>
+        <p v-if="!joueur?.lieuId">Vous devez d'abord vous deplacer dans un lieu</p>
         <div v-else>
-          <p>Quêtes disponibles dans <strong>{{ lieuActuel?.nom || joueur.lieuId }}</strong> :</p>
+          <p>Quetes disponibles dans <strong>{{ lieuActuel?.nom || joueur.lieuId }}</strong> :</p>
           <div>
             <label>Type d'action :</label>
             <select v-model="typeActionQuete">
               <option value="activer">Activer</option>
-              <option value="completer">Compléter</option>
+              <option value="completer">Completer</option>
             </select>
           </div>
           <div>
-            <label>Quête :</label>
+            <label>Quete :</label>
             <select v-model="queteIdAction">
-              <option value="">-- Sélectionner une quête --</option>
+              <option value="">-- Selectionner une quete --</option>
               <option v-for="q in quetesDansLieu" :key="q.id" :value="q.id">
                 {{ q.nom || q.name }} ({{ q.etat }})
               </option>
@@ -237,7 +275,7 @@ function actionQuete() {
             <input v-model="motDePasseQuete" type="password" placeholder="Mot de passe" />
           </div>
           <button @click="actionQuete" :disabled="!joueur?.lieuId">
-            {{ typeActionQuete === 'activer' ? 'Activer' : 'Compléter' }} la quête
+            {{ typeActionQuete === "activer" ? "Activer" : "Completer" }} la quete
           </button>
         </div>
       </div>
@@ -305,3 +343,4 @@ p strong {
   color: #2c3e50;
 }
 </style>
+

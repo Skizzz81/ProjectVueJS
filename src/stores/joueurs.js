@@ -6,23 +6,31 @@ const default_players = [
     id: 1,
     nom: "Joueur 1",
     etat: "vivant",
-    commentaireMj: "Commentaire visible uniquement en mode MJ.",
-    description: "Description du joueur.",
+    commentaireMj: "Commentaire MJ joueur 1.",
+    description: "Personnage principal de la campagne alpha.",
     inventaireObjetsIds: [1],
     inventaireIndicesIds: [1],
-    lieuId: 1,
+    lieuId: 1
   },
-
   {
-
     id: 2,
     nom: "Joueur 2",
     etat: "vivant",
-    commentaireMj: "Commentaire MJ pour le joueur 2.",
-    description: "Description du joueur 2.",
+    commentaireMj: "Commentaire MJ joueur 2.",
+    description: "Second personnage de la campagne alpha.",
     inventaireObjetsIds: [2],
+    inventaireIndicesIds: [],
+    lieuId: 2
+  },
+  {
+    id: 3,
+    nom: "Joueur 3",
+    etat: "vivant",
+    commentaireMj: "Commentaire MJ joueur 3.",
+    description: "Personnage de la campagne beta.",
+    inventaireObjetsIds: [3],
     inventaireIndicesIds: [2],
-    lieuId: 1
+    lieuId: 3
   }
 ];
 

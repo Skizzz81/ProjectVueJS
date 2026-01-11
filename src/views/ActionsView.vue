@@ -1,9 +1,20 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import SelecteurJoueur from "../components/SelecteurJoueur.vue";
 import ActionsJoueur from "../components/ActionsJoueur.vue";
+import { useCampaignsStore } from "../stores/campagnes";
 
 const joueurSelectionneId = ref(null);
+const campaignsStore = useCampaignsStore();
+
+const campagneActive = computed(() => {
+  const id = campaignsStore.activeCampaignId?.value ?? campaignsStore.activeCampaignId;
+  return campaignsStore.list.find((campagne) => String(campagne.id) === String(id));
+});
+
+const aucunJoueur = computed(() => {
+  return !campagneActive.value || (campagneActive.value.joueurIds || []).length === 0;
+});
 </script>
 
 <template>
@@ -12,8 +23,12 @@ const joueurSelectionneId = ref(null);
 
     <SelecteurJoueur v-model="joueurSelectionneId" />
 
-    <div v-if="!joueurSelectionneId">
-      <p>Veuillez sélectionner un joueur pour effectuer des actions</p>
+    <div v-if="aucunJoueur">
+      <p>Aucun joueur dans la campagne active.</p>
+    </div>
+
+    <div v-else-if="!joueurSelectionneId">
+      <p>Veuillez selectionner un joueur pour effectuer des actions</p>
     </div>
 
     <div v-else>

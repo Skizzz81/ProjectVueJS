@@ -179,7 +179,7 @@ function reprendreIndiceATous() {
         <select v-model="chapitreEtat">
           <option value="inactif">inactif</option>
           <option value="actif">actif</option>
-          <option value="terminé">terminé</option>
+          <option value="termine">termine</option>
         </select>
         <button @click="changerEtatChapitre">Appliquer</button>
       </div>
@@ -199,7 +199,7 @@ function reprendreIndiceATous() {
         <select v-model="queteEtat">
           <option value="inactive">inactive</option>
           <option value="active">active</option>
-          <option value="terminée">terminée</option>
+          <option value="terminee">terminee</option>
           <option value="abandonnée">abandonnée</option>
         </select>
         <button @click="changerEtatQuete">Appliquer</button>

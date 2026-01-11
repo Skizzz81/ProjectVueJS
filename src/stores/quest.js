@@ -4,16 +4,32 @@ import { ref, watchEffect } from 'vue';
 const default_quests = [
     {
         id: 1,
-        name: "L'hérétique",
-        status: 'active',
-        description: "Pour un tel échec, aucune punition n'est assez grande...",
-        lieu: "Quelque part dans l'espace",
-        commentary: "",
-        activation_password: "WORT",
-        resolution_password: "SHINY_ARMOR",
-        rewards: []
+        nom: "Retrouver le symbole",
+        etat: 'active',
+        description: "Explorer le lieu pour trouver le symbole.",
+        lieu: "Temple",
+        commentaire: "",
+        motDePasseResolution: "SYMBOLE"
     },
-]
+    {
+        id: 2,
+        nom: "Delivrer l'ombre",
+        etat: 'inactive',
+        description: "Liberer l'esprit prisonnier.",
+        lieu: "Crypte",
+        commentaire: "",
+        motDePasseResolution: "LIBRE"
+    },
+    {
+        id: 3,
+        nom: "Message secret",
+        etat: 'inactive',
+        description: "Trouver l'indice cache.",
+        lieu: "Bibliotheque",
+        commentaire: "",
+        motDePasseResolution: "CODE"
+    }
+];
 
 export const useQuestsStore = defineStore('quest', () => {
     // Helpers
@@ -30,7 +46,7 @@ export const useQuestsStore = defineStore('quest', () => {
 
     // Expose
     function ajouterQuete(data = {}){
-        const allowedEtats = ['inactive','active','terminée','abandonnée'];
+        const allowedEtats = ['inactive','active','terminee','abandonnée'];
         const etat = data.etat || 'inactive';
         if (!allowedEtats.includes(etat)) return { success: false, error: 'etat invalide' };
 
@@ -53,7 +69,7 @@ export const useQuestsStore = defineStore('quest', () => {
         if(!quete) return { success: false, error: 'quête introuvable' };
 
         if (data.etat !== undefined) {
-            const allowedEtats = ['inactive','active','terminée','abandonnée'];
+            const allowedEtats = ['inactive','active','terminee','abandonnée'];
             if (!allowedEtats.includes(data.etat)) return { success: false, error: 'etat invalide' };
             quete.etat = data.etat;
         }
