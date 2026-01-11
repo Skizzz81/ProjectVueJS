@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue';
 import { usePlacesStore } from '../stores/lieux';
 
-const props       = defineProps({
+const props = defineProps({
   quest: { type: Object, default: null },
   mode: { type: String, default: 'edit' }
 });
@@ -10,33 +10,33 @@ const emit        = defineEmits(['submit', 'cancel']);
 const lieuxStore  = usePlacesStore();
 const form        = ref({
   id: 0,
-  name: "",
-  status: 'active',
+  nom: "",
+  etat: 'active',
   description: "",
-  commentary: "",
+  commentaireMj: "",
   activation_password: "",
   resolution_password: "",
   rewards: [],
   chapter_id: 0,
-  place_id: 0
+  lieu: ""
 });
 
 watch(
   () => props.quest,
   (quest) => {
     if (!quest) {
-      form.value = { name: "", status: 'active' };
+      form.value = { nom: "", etat: 'active' };
       return;
     }
     form.value = {
-      name: quest.name ?? "",
-      status: quest.status ?? 'active',
+      nom: quest.nom ?? "",
+      etat: quest.etat ?? 'active',
       description: quest.description ?? "",
-      commentary: quest.commentary ?? "",
+      commentaireMj: quest.commentaireMj ?? "",
       activation_password: quest.activation_password ?? "",
       resolution_password: quest.resolution_password ?? "",
       chapter_id: quest.chapter_id ?? 0,
-      place_id: quest.place_id ?? 0,
+      lieu: quest.lieu ?? "",
       rewards: Array.isArray(quest.rewards)
         ? [...quest.rewards]
         : [],
@@ -47,14 +47,14 @@ watch(
 
 function envoyer(){
   emit('submit', {
-    name: form.value.name,
-    status: form.value.status,
+    nom: form.value.nom,
+    etat: form.value.etat,
     description: form.value.description,
-    commentary: form.value.commentary,
+    commentaireMj: form.value.commentaireMj,
     activation_password: form.value.activation_password,
     resolution_password: form.value.resolution_password,
     chapter_id: form.value.chapter_id,
-    place_id: form.value.place_id,
+    lieu: form.value.lieu,
     rewards: form.value.rewards
   });
 }
@@ -67,7 +67,7 @@ function envoyer(){
 
       <label>
         Nom
-        <input v-model="form.name" type="text" required />
+        <input v-model="form.nom" type="text" required />
       </label>
 
       <label>
@@ -87,12 +87,12 @@ function envoyer(){
 
       <label>
         Commentaire MJ
-        <textarea v-model="form.commentary"></textarea>
+        <textarea v-model="form.commentaireMj"></textarea>
       </label>
 
       <label>
         Lieu
-        <select v-model="form.place_id">
+        <select v-model="form.lieu">
           <option value="">Aucun</option>
           <option v-if="lieuxStore.list.length === 0" disabled value="">
             Aucun lieu disponible
@@ -101,6 +101,16 @@ function envoyer(){
             {{ l.nom }}
           </option>
         </select>
+      </label>
+
+      <label>
+        Mot de passe d'activation
+        <textarea v-model="form.activation_password"></textarea>
+      </label>
+
+      <label>
+        Mot de passe de résolution
+        <textarea v-model="form.resolution_password"></textarea>
       </label>
 
       <div>

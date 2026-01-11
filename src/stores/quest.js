@@ -1,7 +1,7 @@
 import { defineStore }      from 'pinia';
 import { ref, watchEffect } from 'vue';
 
-const allowed_statuses  = ['inactive', 'active', 'achieved', 'cancelled'];
+const allowedEtats      = ['inactive','active','terminee','abandonnée'];
 const default_quests    = [
     {
         id: 1,
@@ -47,18 +47,17 @@ export const useQuestsStore = defineStore('quest', () => {
 
     // Expose
     function ajouterQuete(data = {}){
-        const allowedEtats = ['inactive','active','terminee','abandonnée'];
         const etat = data.etat || 'inactive';
-        if (!allowedEtats.includes(etat)) return { success: false, error: 'etat invalide' };
 
-        if (!allowed_statuses.includes(status)) return { success: false, error: "État invalide" };
+        if (!allowedEtats.includes(etat)) return { success: false, error: "État invalide" };
 
         const quest = {
             id:                     data.id ?? genId(),
-            name:                   data.nom || "Nouvelle quête",
-            status:                 data.status,
-            description:            data.description || '',
-            commentary:             data.commentary || '',
+            nom:                    data.nom || "Nouvelle quête",
+            etat:                   data.etat || 'inactive',
+            description:            data.description || 'Description par défaut',
+            commentaireMj:          data.commentaireMj || '',
+            lieu:                   data.lieu || '',
             activation_password:    data.activation_password || '',
             resolution_password:    data.resolution_password || ''
         };
@@ -67,30 +66,44 @@ export const useQuestsStore = defineStore('quest', () => {
         return { success: true, quest: quest };
     };
 
-    function modifyQuest(id, data = {}){
+    function modifierQuete(id, data = {}){
         const quest = findQuest(id);
         if(!quest) return { success: false, error: "Quête introuvable" };
 
         if (data.etat !== undefined) {
             const allowedEtats = ['inactive','active','terminee','abandonnée'];
             if (!allowedEtats.includes(data.etat)) return { success: false, error: 'etat invalide' };
-            quete.etat = data.etat;
+            quest.etat = data.etat;
         }
 
         if (data.nom !== undefined) quest.nom = data.nom;
         if (data.description !== undefined) quest.description = data.description;
-        if (data.commentary !== undefined) quest.commentary = data.commentary;
+        if (data.commentaireMj !== undefined) quest.commentaireMj = data.commentaireMj;
         if (data.activation_password !== undefined) quest.activation_password = data.activation_password;
         if (data.resolution_password !== undefined) quest.resolution_password = data.resolution_password;
 
         return { success: true, quest };
     };
 
-    function deleteQuest(id){
+    function supprimerQuete(id){
         const index = findIndex(id);
         if(index === -1) return { success: false, error: "Quête introuvable" };
         list.value.splice(index, 1);
         return { success: true };
+    };
+
+    function dupliquerQuete(id){
+        const original = findQuest(id);
+
+        if (!original) return { success: false, error: "Quête introuvable" };
+
+        const copie = {
+            ...original,
+            id: crypto.randomUUID(),
+            nom: `${original.nom} (copie)`
+        };
+        list.value.push(copie);
+        return { success: true, quest: copie };
     };
 
     return {
@@ -98,6 +111,7 @@ export const useQuestsStore = defineStore('quest', () => {
         ajouterQuete,
         modifierQuete,
         supprimerQuete,
+        dupliquerQuete,
         findQuest
     };
 });
