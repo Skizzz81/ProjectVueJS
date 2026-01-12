@@ -70,7 +70,7 @@ function changerEtatChapitre() {
 function changerEtatQuete() {
   const id = queteId.value;
   if (!id) return alert("Choisir une quête");
-  questsStore.modifierQuete(id, { etat: queteEtat.value });
+  questsStore.modifyQuest(id, { etat: queteEtat.value });
 }
 
 function changerEtatJoueur() {

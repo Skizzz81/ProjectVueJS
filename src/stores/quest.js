@@ -1,7 +1,8 @@
 import { defineStore }      from 'pinia';
 import { ref, watchEffect } from 'vue';
 
-const default_quests = [
+const allowedEtats      = ['inactive','active','terminee','abandonnée'];
+const default_quests    = [
     {
         id: 1,
         nom: "Retrouver le symbole",
@@ -34,9 +35,9 @@ const default_quests = [
 export const useQuestsStore = defineStore('quest', () => {
     // Helpers
     function findQuest(quest_id){return list.value.find(({ id }) => (id === quest_id));};
-    function genId(){ return (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Math.random().toString(36).slice(2,9); }
+    function genId(){ return (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Math.random().toString(36).slice(2,9); };
  
-    function findIndex(quest_id){ return list.value.findIndex(quete => quete.id === quest_id); }
+    function findIndex(quest_id){ return list.value.findIndex(quest => quest.id === quest_id); };
 
     // States
     const list = ref(JSON.parse(localStorage.getItem('quests') ?? 'null') ?? default_quests);
@@ -46,55 +47,71 @@ export const useQuestsStore = defineStore('quest', () => {
 
     // Expose
     function ajouterQuete(data = {}){
-        const allowedEtats = ['inactive','active','terminee','abandonnée'];
         const etat = data.etat || 'inactive';
-        if (!allowedEtats.includes(etat)) return { success: false, error: 'etat invalide' };
 
-        const quete = {
-            id: data.id ?? genId(),
-            nom: data.nom || "Nouvelle quête",
-            etat,
-            description: data.description || '',
-            lieu: data.lieu || null,
-            commentaire: data.commentaire || '',
-            motDePasseResolution: data.motDePasseResolution || ''
+        if (!allowedEtats.includes(etat)) return { success: false, error: "État invalide" };
+
+        const quest = {
+            id:                     data.id ?? genId(),
+            nom:                    data.nom || "Nouvelle quête",
+            etat:                   data.etat || 'inactive',
+            description:            data.description || 'Description par défaut',
+            commentaireMj:          data.commentaireMj || '',
+            lieu:                   data.lieu || '',
+            activation_password:    data.activation_password || '',
+            resolution_password:    data.resolution_password || ''
         };
 
-        list.value.push(quete);
-        return { success: true, quete };
-    }
+        list.value.push(quest);
+        return { success: true, quest: quest };
+    };
 
     function modifierQuete(id, data = {}){
-        const quete = findQuest(id);
-        if(!quete) return { success: false, error: 'quête introuvable' };
+        const quest = findQuest(id);
+        if(!quest) return { success: false, error: "Quête introuvable" };
 
         if (data.etat !== undefined) {
             const allowedEtats = ['inactive','active','terminee','abandonnée'];
             if (!allowedEtats.includes(data.etat)) return { success: false, error: 'etat invalide' };
-            quete.etat = data.etat;
+            quest.etat = data.etat;
         }
 
-        if (data.nom !== undefined) quete.nom = data.nom;
-        if (data.description !== undefined) quete.description = data.description;
-        if (data.lieu !== undefined) quete.lieu = data.lieu;
-        if (data.commentaire !== undefined) quete.commentaire = data.commentaire;
-        if (data.motDePasseResolution !== undefined) quete.motDePasseResolution = data.motDePasseResolution;
+        if (data.nom !== undefined) quest.nom = data.nom;
+        if (data.description !== undefined) quest.description = data.description;
+        if (data.commentaireMj !== undefined) quest.commentaireMj = data.commentaireMj;
+        if (data.activation_password !== undefined) quest.activation_password = data.activation_password;
+        if (data.resolution_password !== undefined) quest.resolution_password = data.resolution_password;
 
-        return { success: true, quete };
-    }
+        return { success: true, quest };
+    };
 
     function supprimerQuete(id){
         const index = findIndex(id);
-        if(index === -1) return { success: false, error: 'quête introuvable' };
+        if(index === -1) return { success: false, error: "Quête introuvable" };
         list.value.splice(index, 1);
         return { success: true };
-    }
+    };
+
+    function dupliquerQuete(id){
+        const original = findQuest(id);
+
+        if (!original) return { success: false, error: "Quête introuvable" };
+
+        const copie = {
+            ...original,
+            id: crypto.randomUUID(),
+            nom: `${original.nom} (copie)`
+        };
+        list.value.push(copie);
+        return { success: true, quest: copie };
+    };
 
     return {
         list,
         ajouterQuete,
         modifierQuete,
         supprimerQuete,
+        dupliquerQuete,
         findQuest
     };
 });
